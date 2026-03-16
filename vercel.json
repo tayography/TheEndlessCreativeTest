@@ -1,0 +1,7 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/endless-creative-funnel.html" },
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/mothership", "destination": "/mothership.html" }
+  ]
+}
