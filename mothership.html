@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EC Mothership — The Endless Creative</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --y:#f2e228;--m:#ff2d78;--c:#00d4ff;--g:#1aff8c;--o:#ff6b1a;--p:#b06cff;
+  --fd:'Bebas Neue',sans-serif;--fb:'DM Sans',sans-serif;--fm:'Space Mono',monospace;
+  --sw:228px;
+}
+body{font-family:var(--fb);display:flex;min-height:100vh;
+  --bg:#080808;--surf:#111111;--s2:#181818;--s3:#202020;
+  --bdr:rgba(255,255,255,.06);--tx:#f0eeea;--mu:rgba(240,238,234,.42);--sub:rgba(240,238,234,.1);
+  background:var(--bg);color:var(--tx);transition:background .3s,color .3s;
+}
+body.light{
+  --bg:#edebe6;--surf:#faf9f6;--s2:#f2f0ec;--s3:#e8e6e1;
+  --bdr:rgba(0,0,0,.07);--tx:#111;--mu:rgba(17,17,17,.42);--sub:rgba(17,17,17,.08);
+}
+/* noise grain */
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.03;pointer-events:none;z-index:9000;}
+
+/* ─── SIDEBAR ─────────────────────────────── */
+.sb{width:var(--sw);min-height:100vh;background:var(--surf);border-right:1px solid var(--bdr);
+  display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:300;overflow-y:auto;}
+.sb-head{padding:1.3rem 1.2rem 1rem;border-bottom:1px solid var(--bdr);}
+.sb-wordmark{font-family:var(--fd);font-size:1rem;letter-spacing:.07em;line-height:1.1;color:var(--tx);}
+.sb-eyebrow{font-family:var(--fm);font-size:.48rem;letter-spacing:.25em;color:var(--y);text-transform:uppercase;margin-top:.3rem;}
+.sb-strip{height:2px;background:linear-gradient(90deg,var(--y),var(--m),var(--c),var(--g),var(--o),var(--p),var(--y));background-size:300%;animation:sa 4s linear infinite;margin:.7rem -1.2rem;}
+@keyframes sa{0%{background-position:0%}100%{background-position:300%}}
+.sb-user{display:flex;align-items:center;gap:.6rem;padding:.55rem .85rem;background:var(--s2);margin:.3rem 0 0;}
+.sb-av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:.95rem;flex-shrink:0;}
+.sb-un{font-size:.75rem;font-weight:600;color:var(--tx);}
+.sb-ur{font-family:var(--fm);font-size:.48rem;letter-spacing:.12em;color:var(--mu);text-transform:uppercase;}
+
+.sb-nav{flex:1;padding:.6rem 0;}
+.sb-sec{font-family:var(--fm);font-size:.48rem;letter-spacing:.22em;text-transform:uppercase;color:var(--mu);padding:.65rem 1.2rem .25rem;}
+.sb-link{display:flex;align-items:center;gap:.55rem;padding:.46rem 1.2rem;font-size:.78rem;font-weight:500;color:var(--mu);background:none;border:none;border-left:2px solid transparent;width:100%;text-align:left;cursor:pointer;font-family:var(--fb);transition:all .14s;}
+.sb-link:hover{color:var(--tx);background:var(--s2);}
+.sb-link.on{color:var(--y);border-left-color:var(--y);background:rgba(242,226,40,.045);}
+.sb-ic{font-size:.85rem;width:17px;text-align:center;flex-shrink:0;opacity:.7;}
+.sb-pill{margin-left:auto;font-family:var(--fm);font-size:.46rem;padding:.12rem .42rem;border-radius:20px;}
+
+.sb-foot{padding:.85rem 1.2rem;border-top:1px solid var(--bdr);display:flex;flex-direction:column;gap:.45rem;}
+.sb-btn-sm{display:flex;align-items:center;gap:.45rem;padding:.42rem .7rem;border:1px solid var(--bdr);background:var(--s2);color:var(--mu);font-family:var(--fm);font-size:.54rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .18s;width:100%;text-decoration:none;}
+.sb-btn-sm:hover{border-color:var(--y);color:var(--y);}
+.sb-btn-sm.back:hover{border-color:var(--c);color:var(--c);}
+
+/* ─── MAIN ────────────────────────────────── */
+.main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;}
+.topbar{padding:.85rem 1.7rem;border-bottom:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center;background:var(--surf);position:sticky;top:0;z-index:200;}
+.pg-title{font-family:var(--fd);font-size:1.45rem;letter-spacing:.05em;}
+.tb-right{display:flex;gap:.55rem;align-items:center;}
+.btn{font-family:var(--fb);font-size:.7rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:.42rem .95rem;cursor:pointer;transition:all .18s;border:1px solid var(--bdr);background:transparent;color:var(--mu);}
+.btn:hover{border-color:var(--y);color:var(--y);}
+.btn.pri{background:var(--y);color:#111;border-color:var(--y);}
+.btn.pri:hover{background:var(--m);border-color:var(--m);color:#fff;}
+
+.content{padding:1.4rem 1.7rem;flex:1;}
+.view{display:none;animation:fadein .2s ease;}
+.view.on{display:block;}
+@keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* ─── KPI ROW ─────────────────────────────── */
+.krow{display:grid;gap:.9rem;margin-bottom:1.35rem;}
+.krow.k5{grid-template-columns:repeat(5,1fr);}
+.krow.k4{grid-template-columns:repeat(4,1fr);}
+.krow.k3{grid-template-columns:repeat(3,1fr);}
+.krow.k2{grid-template-columns:repeat(2,1fr);}
+.kcard{background:var(--surf);border:1px solid var(--bdr);padding:1.05rem 1.2rem;position:relative;overflow:hidden;transition:border-color .2s,transform .14s;}
+.kcard:hover{transform:translateY(-1px);}
+.kcard::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--kc,var(--y));}
+.klbl{font-family:var(--fm);font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;color:var(--mu);margin-bottom:.35rem;}
+.kval{font-family:var(--fd);font-size:1.9rem;line-height:1;letter-spacing:.02em;}
+.ksub{font-size:.68rem;color:var(--mu);margin-top:.22rem;}
+.ktag{display:inline-flex;align-items:center;gap:.2rem;font-family:var(--fm);font-size:.5rem;padding:.1rem .38rem;margin-top:.3rem;}
+.ktag.up{background:rgba(26,255,140,.1);color:var(--g);}
+.ktag.dn{background:rgba(255,45,120,.1);color:var(--m);}
+.ktag.nt{background:rgba(0,212,255,.1);color:var(--c);}
+
+/* ─── LAYOUT GRID ─────────────────────────── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-bottom:1.2rem;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.2rem;margin-bottom:1.2rem;}
+.g7030{display:grid;grid-template-columns:1fr .43fr;gap:1.2rem;margin-bottom:1.2rem;}
+.g3070{display:grid;grid-template-columns:.43fr 1fr;gap:1.2rem;margin-bottom:1.2rem;}
+.panel{background:var(--surf);border:1px solid var(--bdr);overflow:hidden;}
+.phd{padding:.8rem 1.2rem;border-bottom:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center;}
+.ptitle{font-family:var(--fd);font-size:1.05rem;letter-spacing:.05em;}
+.pmeta{font-family:var(--fm);font-size:.5rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mu);}
+.pbody{padding:1.1rem 1.2rem;}
+.chartbox{padding:.9rem 1.2rem 1.1rem;}
+.chartbox canvas{max-height:200px;}
+
+/* ─── TABLE ───────────────────────────────── */
+.tw{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:.78rem;}
+thead th{padding:.5rem .95rem;text-align:left;font-family:var(--fm);font-size:.48rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mu);border-bottom:1px solid var(--bdr);background:var(--s2);white-space:nowrap;}
+tbody tr{border-bottom:1px solid var(--bdr);transition:background .12s;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:var(--s2);}
+td{padding:.6rem .95rem;vertical-align:middle;}
+.dim{color:var(--mu);}
+.mono{font-family:var(--fm);font-size:.64rem;}
+
+/* ─── BADGES ──────────────────────────────── */
+.badge{display:inline-flex;align-items:center;font-family:var(--fm);font-size:.5rem;letter-spacing:.05em;text-transform:uppercase;padding:.16rem .48rem;font-weight:700;white-space:nowrap;}
+.s-new{background:rgba(0,212,255,.12);color:var(--c);}
+.s-con{background:rgba(242,226,40,.12);color:#bfac00;}
+.s-int{background:rgba(255,107,26,.13);color:var(--o);}
+.s-won{background:rgba(26,255,140,.12);color:var(--g);}
+.s-lst{background:rgba(255,45,120,.12);color:var(--m);}
+.s-no{background:rgba(136,136,136,.11);color:#888;}
+.s-pro{background:rgba(176,108,255,.12);color:var(--p);}
+.s-sft{background:rgba(255,107,26,.16);color:var(--o);}
+.s-neg{background:rgba(255,45,120,.09);color:var(--m);}
+.pri-c{background:rgba(255,45,120,.12);color:var(--m);}
+.pri-h{background:rgba(255,107,26,.12);color:var(--o);}
+.pri-m{background:rgba(242,226,40,.1);color:#bfac00;}
+.pri-l{background:rgba(136,136,136,.1);color:#888;}
+.sta-ip{background:rgba(0,212,255,.1);color:var(--c);}
+.sta-pl{background:rgba(136,136,136,.1);color:#888;}
+.sta-re{background:rgba(242,226,40,.1);color:#bfac00;}
+.sta-co{background:rgba(26,255,140,.1);color:var(--g);}
+.sta-oh{background:rgba(255,45,120,.1);color:var(--m);}
+
+/* ─── KANBAN ──────────────────────────────── */
+.kanban{display:grid;grid-template-columns:repeat(7,1fr);gap:.7rem;overflow-x:auto;padding-bottom:.5rem;}
+.kcol{background:var(--surf);border:1px solid var(--bdr);min-width:148px;}
+.kchd{padding:.6rem .8rem;border-bottom:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center;}
+.kctitle{font-family:var(--fm);font-size:.5rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mu);}
+.kccount{font-family:var(--fd);font-size:1.05rem;}
+.kcrev{padding:.28rem .8rem;border-bottom:1px solid var(--bdr);font-family:var(--fm);font-size:.48rem;color:var(--mu);}
+.kccards{padding:.35rem;display:flex;flex-direction:column;gap:.3rem;min-height:44px;}
+.kcc{background:var(--s2);border:1px solid var(--bdr);padding:.55rem .65rem;transition:border-color .15s;cursor:default;}
+.kcc:hover{border-color:var(--sub);}
+.kcc-biz{font-size:.73rem;font-weight:600;line-height:1.3;margin-bottom:.12rem;}
+.kcc-meta{font-family:var(--fm);font-size:.48rem;color:var(--mu);}
+.kcc-price{font-size:.7rem;font-weight:700;color:var(--y);margin-top:.28rem;}
+
+/* ─── COMMISSION CARDS ────────────────────── */
+.comm-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.4rem;}
+.cc{background:var(--surf);border:1px solid var(--bdr);padding:1.4rem;position:relative;overflow:hidden;}
+.cc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--ca,var(--y));}
+.cc-pct{font-family:var(--fd);font-size:3.2rem;line-height:1;color:var(--ca,var(--y));margin-bottom:.4rem;}
+.cc-name{font-family:var(--fd);font-size:.95rem;letter-spacing:.05em;margin-bottom:.45rem;}
+.cc-desc{font-size:.73rem;color:var(--mu);line-height:1.65;}
+
+/* ─── CALCULATOR ──────────────────────────── */
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;}
+.cin{background:var(--surf);border:1px solid var(--bdr);padding:1.4rem;}
+.cout{background:var(--surf);border:1px solid var(--bdr);padding:1.4rem;}
+.cf{margin-bottom:.95rem;}
+.clbl{font-family:var(--fm);font-size:.5rem;letter-spacing:.15em;text-transform:uppercase;color:var(--mu);display:block;margin-bottom:.38rem;}
+.cinp{width:100%;background:var(--s2);border:1px solid var(--bdr);color:var(--tx);font-family:var(--fb);font-size:.9rem;padding:.57rem .82rem;outline:none;transition:border-color .2s;}
+.cinp:focus{border-color:var(--y);}
+.cr{display:flex;justify-content:space-between;align-items:flex-start;padding:.6rem 0;border-bottom:1px solid var(--bdr);}
+.cr:last-of-type{border-bottom:none;}
+.crl{font-size:.75rem;color:var(--mu);}
+.crl-sub{font-family:var(--fm);font-size:.48rem;color:var(--mu);margin-top:.08rem;}
+.crv{font-family:var(--fd);font-size:1.35rem;text-align:right;}
+.crv-sub{font-family:var(--fm);font-size:.48rem;color:var(--mu);text-align:right;margin-top:.06rem;}
+.ctotal{background:var(--s2);padding:.9rem 1.1rem;margin-top:.9rem;display:flex;justify-content:space-between;align-items:center;}
+.ctot-lbl{font-family:var(--fm);font-size:.5rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mu);}
+.ctot-sub{font-family:var(--fm);font-size:.48rem;color:var(--mu);margin-top:.12rem;}
+.ctot-val{font-family:var(--fd);font-size:1.9rem;}
+
+/* ─── LEADERBOARD ─────────────────────────── */
+.lb{background:var(--surf);border:1px solid var(--bdr);}
+.lbr{display:flex;align-items:center;gap:.9rem;padding:.85rem 1.2rem;border-bottom:1px solid var(--bdr);transition:background .12s;}
+.lbr:last-child{border-bottom:none;}
+.lbr:hover{background:var(--s2);}
+.lb-rk{font-family:var(--fd);font-size:1.3rem;color:var(--sub);width:22px;flex-shrink:0;}
+.lb-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:.9rem;flex-shrink:0;}
+.lb-nm{flex:1;}
+.lb-name{font-size:.82rem;font-weight:600;}
+.lb-em{font-family:var(--fm);font-size:.5rem;color:var(--mu);}
+.lb-st{display:flex;flex-direction:column;align-items:flex-end;gap:.12rem;}
+.lb-rev{font-family:var(--fd);font-size:1.15rem;}
+.lb-deals{font-family:var(--fm);font-size:.5rem;color:var(--mu);}
+.lb-bar{width:65px;height:3px;background:var(--s2);}
+.lb-fill{height:100%;transition:width .6s ease;}
+
+/* ─── PROGRESS BAR ────────────────────────── */
+.prog-track{height:5px;background:var(--s2);overflow:hidden;margin-top:.5rem;}
+.prog-fill{height:100%;border-radius:0;transition:width .6s ease;}
+
+/* ─── PROJECT CARDS ───────────────────────── */
+.proj-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.proj-card{background:var(--surf);border:1px solid var(--bdr);padding:1.1rem;transition:border-color .18s;}
+.proj-card:hover{border-color:var(--sub);}
+.proj-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.55rem;}
+.proj-name{font-family:var(--fd);font-size:.95rem;letter-spacing:.04em;flex:1;padding-right:.5rem;}
+.proj-desc{font-size:.72rem;color:var(--mu);line-height:1.6;margin-bottom:.7rem;}
+.proj-meta{display:flex;gap:.6rem;align-items:center;margin-bottom:.55rem;flex-wrap:wrap;}
+.proj-budget{font-family:var(--fd);font-size:1.1rem;color:var(--y);}
+.proj-due{font-family:var(--fm);font-size:.52rem;color:var(--mu);}
+.proj-prog{font-family:var(--fd);font-size:.9rem;color:var(--tx);}
+
+/* ─── METRICS GRID ────────────────────────── */
+.metric-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.4rem;}
+.mc{background:var(--surf);border:1px solid var(--bdr);padding:1.2rem;position:relative;overflow:hidden;}
+.mc::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--mc,var(--y));}
+.mc-name{font-family:var(--fm);font-size:.5rem;letter-spacing:.16em;text-transform:uppercase;color:var(--mu);margin-bottom:.35rem;}
+.mc-val{font-family:var(--fd);font-size:2.1rem;line-height:1;}
+.mc-prev{font-size:.7rem;color:var(--mu);margin-top:.22rem;}
+.mc-delta{display:inline-flex;align-items:center;gap:.18rem;font-family:var(--fm);font-size:.5rem;padding:.1rem .38rem;margin-top:.28rem;}
+
+/* ─── ACTIVITY FEED ───────────────────────── */
+.act-item{display:flex;gap:.8rem;padding:.72rem 0;border-bottom:1px solid var(--bdr);}
+.act-item:last-child{border-bottom:none;}
+.act-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:.28rem;}
+.act-title{font-size:.78rem;font-weight:500;}
+.act-sub{font-family:var(--fm);font-size:.5rem;color:var(--mu);margin-top:.1rem;}
+
+/* ─── PRODUCT CARDS ───────────────────────── */
+.prod-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.pc{background:var(--surf);border:1px solid var(--bdr);padding:1.2rem;transition:border-color .18s;}
+.pc:hover{border-color:var(--sub);}
+.pc-price{font-family:var(--fd);font-size:2.1rem;line-height:1;color:var(--y);margin-bottom:.18rem;}
+.pc-period{font-family:var(--fm);font-size:.5rem;letter-spacing:.12em;text-transform:uppercase;color:var(--c);margin-bottom:.55rem;}
+.pc-name{font-family:var(--fd);font-size:.92rem;letter-spacing:.04em;margin-bottom:.45rem;}
+.pc-desc{font-size:.72rem;color:var(--mu);line-height:1.65;margin-bottom:.65rem;}
+.pc-alt{font-family:var(--fm);font-size:.52rem;color:var(--o);margin-bottom:.65rem;}
+.pc-feat{font-size:.7rem;color:var(--mu);display:flex;align-items:center;gap:.38rem;margin-bottom:.25rem;}
+.pc-feat::before{content:'✓';color:var(--g);font-size:.62rem;flex-shrink:0;}
+
+/* ─── TIME ENTRIES ────────────────────────── */
+.te{display:flex;align-items:flex-start;gap:.9rem;padding:.75rem 0;border-bottom:1px solid var(--bdr);}
+.te:last-child{border-bottom:none;}
+.te-av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:.85rem;flex-shrink:0;}
+.te-biz{font-size:.8rem;font-weight:600;}
+.te-note{font-size:.7rem;color:var(--mu);margin-top:.08rem;}
+.te-meta{font-family:var(--fm);font-size:.5rem;color:var(--mu);margin-top:.12rem;}
+.te-dur{font-family:var(--fd);font-size:1.15rem;color:var(--y);flex-shrink:0;}
+
+/* ─── FOLLOW-UPS ──────────────────────────── */
+.fu{display:flex;align-items:center;gap:.8rem;padding:.68rem 0;border-bottom:1px solid var(--bdr);}
+.fu:last-child{border-bottom:none;}
+.fu-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.fu-biz{flex:1;font-size:.8rem;font-weight:500;}
+.fu-con{font-size:.7rem;color:var(--mu);}
+.fu-date{font-family:var(--fm);font-size:.56rem;color:var(--o);}
+
+/* ─── SEARCH ──────────────────────────────── */
+.sr{display:flex;gap:.6rem;margin-bottom:1.05rem;align-items:center;}
+.si{flex:1;background:var(--surf);border:1px solid var(--bdr);color:var(--tx);font-family:var(--fb);font-size:.8rem;padding:.52rem .88rem;outline:none;transition:border-color .2s;}
+.si:focus{border-color:var(--y);}
+.sf{background:var(--surf);border:1px solid var(--bdr);color:var(--mu);font-family:var(--fm);font-size:.56rem;padding:.52rem .72rem;outline:none;cursor:pointer;}
+
+/* ─── SECTION HD ──────────────────────────── */
+.shd{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;}
+.stitle{font-family:var(--fd);font-size:1.15rem;letter-spacing:.04em;}
+.smeta{font-family:var(--fm);font-size:.5rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mu);}
+
+/* ─── MODAL ───────────────────────────────── */
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:600;align-items:center;justify-content:center;padding:1rem;}
+.ov.open{display:flex;}
+.modal{background:var(--surf);border:1px solid var(--bdr);width:100%;max-width:540px;max-height:90vh;overflow-y:auto;}
+.mhd{padding:1rem 1.35rem;border-bottom:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center;}
+.mtitle{font-family:var(--fd);font-size:1.15rem;letter-spacing:.05em;}
+.mx{background:none;border:none;color:var(--mu);font-size:1.05rem;cursor:pointer;}
+.mx:hover{color:var(--tx);}
+.mbody{padding:1.35rem;}
+.mrow{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:.8rem;}
+.mrow.full{grid-template-columns:1fr;}
+.mf{display:flex;flex-direction:column;gap:.32rem;}
+.mf.s2{grid-column:1/-1;}
+.mlbl{font-family:var(--fm);font-size:.5rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mu);}
+.minp{background:var(--s2);border:1px solid var(--bdr);color:var(--tx);font-family:var(--fb);font-size:.83rem;padding:.57rem .82rem;outline:none;transition:border-color .2s;width:100%;}
+.minp:focus{border-color:var(--y);}
+.mfoot{display:flex;gap:.6rem;justify-content:flex-end;padding-top:.9rem;border-top:1px solid var(--bdr);margin-top:1.1rem;}
+
+/* ─── SCROLLBAR ───────────────────────────── */
+::-webkit-scrollbar{width:3px;height:3px;}
+::-webkit-scrollbar-thumb{background:var(--s3);}
+
+/* ─── AUTH ────────────────────────────────── */
+#authWall{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1.5rem;}
+#authWall.hidden{display:none;}
+.auth-wordmark{font-family:var(--fd);font-size:2rem;letter-spacing:.07em;color:var(--tx);}
+.auth-wordmark span{color:var(--y);}
+.auth-tagline{font-family:var(--fm);font-size:.55rem;letter-spacing:.3em;text-transform:uppercase;color:var(--mu);}
+.auth-box{width:100%;max-width:400px;background:var(--surf);border:1px solid var(--bdr);overflow:hidden;}
+.auth-strip{height:2px;background:linear-gradient(90deg,var(--y),var(--m),var(--c),var(--g),var(--o),var(--p),var(--y));background-size:300%;animation:sa 4s linear infinite;}
+.auth-box-inner{padding:2rem 2rem 2.2rem;}
+.auth-logo{font-family:var(--fd);font-size:1.5rem;letter-spacing:.07em;margin-bottom:.2rem;}
+.auth-eyebrow{font-family:var(--fm);font-size:.48rem;letter-spacing:.25em;color:var(--y);text-transform:uppercase;margin-bottom:2rem;}
+.auth-field{margin-bottom:1rem;}
+.auth-lbl{font-family:var(--fm);font-size:.5rem;letter-spacing:.15em;text-transform:uppercase;color:var(--mu);display:block;margin-bottom:.38rem;}
+.auth-inp{width:100%;background:var(--s2);border:1px solid var(--bdr);color:var(--tx);font-family:var(--fb);font-size:.9rem;padding:.6rem .85rem;outline:none;transition:border-color .2s;}
+.auth-inp:focus{border-color:var(--y);}
+.auth-err{font-family:var(--fm);font-size:.55rem;color:var(--m);margin-top:.35rem;display:none;}
+.auth-err.show{display:block;}
+.auth-submit{width:100%;background:var(--y);color:#111;border:none;font-family:var(--fb);font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.7rem;cursor:pointer;margin-top:1.2rem;transition:all .2s;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));}
+.auth-submit:hover{background:var(--m);color:#fff;}
+
+/* ─── PROFILE MODAL ──────────────────────── */
+#profModal .modal{max-width:420px;}
+.prof-avatar{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:1.8rem;margin:0 auto 1rem;}
+.prof-email{text-align:center;font-family:var(--fm);font-size:.58rem;color:var(--mu);letter-spacing:.1em;margin-bottom:1.5rem;}
+.prof-divider{font-family:var(--fm);font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;color:var(--mu);margin-bottom:.85rem;padding-bottom:.5rem;border-bottom:1px solid var(--bdr);}
+
+/* ─── RESPONSIVE ──────────────────────────── */
+@media(max-width:1280px){
+  .krow.k5{grid-template-columns:repeat(3,1fr);}
+  .g2,.g7030,.g3070{grid-template-columns:1fr;}
+  .kanban{grid-template-columns:repeat(4,1fr);}
+  .comm-row,.proj-grid,.metric-grid,.prod-grid{grid-template-columns:1fr 1fr;}
+  .calc-grid{grid-template-columns:1fr;}
+}
+.mob-topbar{display:none;position:fixed;top:0;left:0;right:0;height:52px;background:var(--surf);border-bottom:1px solid var(--bdr);z-index:400;align-items:center;justify-content:space-between;padding:0 1rem;}
+.mob-wordmark{font-family:var(--fd);font-size:.95rem;letter-spacing:.07em;color:var(--tx);}
+.mob-right{display:flex;gap:.5rem;align-items:center;}
+.mob-icon-btn{background:none;border:1px solid var(--bdr);color:var(--mu);width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.85rem;transition:all .18s;}
+.mob-icon-btn:hover{border-color:var(--y);color:var(--y);}
+.drawer-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:350;}
+.drawer-ov.open{display:block;}
+.sb.open{transform:translateX(0) !important;}
+@media(max-width:900px){
+  .mob-topbar{display:flex;}
+  .main{margin-left:0;padding-top:52px;}
+  .sb{transform:translateX(-100%);transition:transform .25s ease;z-index:360;}
+  .topbar{display:none;}
+  .content{padding:1rem;}
+  .krow.k5,.krow.k4,.krow.k3,.krow.k2{grid-template-columns:1fr 1fr;}
+  .g2,.g7030,.g3070{grid-template-columns:1fr;}
+  .kanban{grid-template-columns:repeat(3,1fr);}
+  .comm-row,.proj-grid,.metric-grid,.prod-grid{grid-template-columns:1fr;}
+  .calc-grid{grid-template-columns:1fr;}
+  .g3{grid-template-columns:1fr;}
+  .lb-bar{display:none;}
+}
+@media(max-width:600px){
+  .krow.k5,.krow.k4,.krow.k3,.krow.k2{grid-template-columns:1fr;}
+  .kanban{grid-template-columns:repeat(2,1fr);}
+  .mrow{grid-template-columns:1fr;}
+  .auth-box{padding:2rem 1.25rem;}
+}
+</style>
+</head>
+<body>
+
+<div class="drawer-ov" id="drawerOv" onclick="closeSb()"></div>
+
+<div class="mob-topbar">
+  <div class="mob-wordmark">EC MOTHERSHIP</div>
+  <div class="mob-right">
+    <button class="mob-icon-btn" id="mobThemeBtn" onclick="toggleTheme()" title="Toggle theme">☀</button>
+    <button class="mob-icon-btn" id="mobProfileBtn" onclick="openMod('profModal');loadProfile()" title="Profile">◎</button>
+    <button class="mob-icon-btn" id="mobMenuBtn" onclick="toggleSb()" title="Menu">☰</button>
+  </div>
+</div>
+
+<aside class="sb">
+  <div class="sb-head">
+    <div class="sb-wordmark">THE ENDLESS<br>CREATIVE</div>
+    <div class="sb-eyebrow">⬡ EC Mothership</div>
+    <div class="sb-strip"></div>
+    <div class="sb-user">
+      <div class="sb-av" style="background:rgba(242,226,40,.14);color:var(--y)">T</div>
+      <div><div class="sb-un">Taylor &amp; Braden</div><div class="sb-ur">Admin · EC Mothership</div></div>
+    </div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-sec">Overview</div>
+    <button class="sb-link on" onclick="go('dashboard',this)"><span class="sb-ic">▣</span>Dashboard</button>
+    <button class="sb-link" onclick="go('metrics',this)"><span class="sb-ic">◈</span>Metrics</button>
+
+    <div class="sb-sec">Sales</div>
+    <button class="sb-link" onclick="go('pipeline',this)"><span class="sb-ic">◉</span>Lead Pipeline<span class="sb-pill" id="spipe" style="background:rgba(242,226,40,.14);color:var(--y)"></span></button>
+    <button class="sb-link" onclick="go('leads',this)"><span class="sb-ic">≡</span>All Leads</button>
+    <button class="sb-link" onclick="go('followups',this)"><span class="sb-ic">◷</span>Follow-Ups<span class="sb-pill" id="sfu" style="background:rgba(255,107,26,.14);color:var(--o)"></span></button>
+
+    <div class="sb-sec">Finance</div>
+    <button class="sb-link" onclick="go('revenue',this)"><span class="sb-ic">$</span>Revenue</button>
+    <button class="sb-link" onclick="go('commissions',this)"><span class="sb-ic">%</span>Commissions</button>
+    <button class="sb-link" onclick="go('calculator',this)"><span class="sb-ic">⊞</span>Calculator</button>
+
+    <div class="sb-sec">Projects &amp; Team</div>
+    <button class="sb-link" onclick="go('projects',this)"><span class="sb-ic">◫</span>Projects</button>
+    <button class="sb-link" onclick="go('team',this)"><span class="sb-ic">◎</span>Team Stats</button>
+    <button class="sb-link" onclick="go('timelog',this)"><span class="sb-ic">◷</span>Time Log</button>
+
+    <div class="sb-sec">Catalog</div>
+    <button class="sb-link" onclick="go('products',this)"><span class="sb-ic">▤</span>Products</button>
+  </nav>
+  <div class="sb-foot">
+    <button class="sb-btn-sm" onclick="openMod('profModal');loadProfile()" style="border-color:var(--y);color:var(--y)">◎ <span id="sbUserName">Profile</span></button>
+    <a href="/" class="sb-btn-sm back">← Back to Site</a>
+    <a href="/admin" class="sb-btn-sm" style="color:var(--c);border-color:var(--c)">⚙ Content Admin</a>
+    <button class="sb-btn-sm" onclick="toggleTheme()"><span id="tIco">☀</span><span id="tLbl"> Light Mode</span></button>
+    <button class="sb-btn-sm" onclick="doLogout()" style="color:var(--m);">⏻ Logout</button>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div class="pg-title" id="pgTitle">DASHBOARD</div>
+    <div class="tb-right">
+      <a href="/" class="btn" style="text-decoration:none">← Site</a>
+      <a href="/admin" class="btn" style="text-decoration:none;color:var(--c);border-color:var(--c)">⚙ Admin</a>
+      <button class="btn pri" onclick="openMod('modLead')">＋ Add Lead</button>
+      <button class="btn" onclick="dlCSV()">↓ CSV</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+<!-- ══════════ DASHBOARD ══════════ -->
+<div class="view on" id="v-dashboard">
+  <div class="krow k5" id="dk"></div>
+  <div class="g7030">
+    <div>
+      <div class="g2">
+        <div class="panel">
+          <div class="phd"><span class="ptitle">PIPELINE STATUS</span><span class="pmeta">All Leads</span></div>
+          <div class="chartbox"><canvas id="cStatus"></canvas></div>
+        </div>
+        <div class="panel">
+          <div class="phd"><span class="ptitle">REVENUE BY MONTH</span><span class="pmeta">Closed Won</span></div>
+          <div class="chartbox"><canvas id="cRev"></canvas></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="phd"><span class="ptitle">RECENT LEADS</span><span class="pmeta" id="dRecentMeta"></span></div>
+        <div class="tw"><table>
+          <thead><tr><th>Business</th><th>Status</th><th>EC Tech</th><th>Price</th><th>Called</th><th>Added</th></tr></thead>
+          <tbody id="dRecent"></tbody>
+        </table></div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:1.2rem">
+      <div class="panel">
+        <div class="phd"><span class="ptitle">FOLLOW-UPS</span><span class="pmeta" id="dFuMeta"></span></div>
+        <div class="pbody" style="padding:.7rem 1.1rem" id="dFu"></div>
+      </div>
+      <div class="panel">
+        <div class="phd"><span class="ptitle">ACTIVITY</span></div>
+        <div class="pbody" style="padding:.7rem 1.1rem" id="dAct"></div>
+      </div>
+      <div class="panel">
+        <div class="phd"><span class="ptitle">TEAM</span></div>
+        <div id="dTeam"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ METRICS ══════════ -->
+<div class="view" id="v-metrics">
+  <div class="shd"><span class="stitle">LIVE METRICS</span><span class="smeta">From EC Mothership</span></div>
+  <div class="metric-grid" id="metricGrid"></div>
+  <div class="g2">
+    <div class="panel">
+      <div class="phd"><span class="ptitle">REVENUE TREND</span></div>
+      <div class="chartbox"><canvas id="cMetRev"></canvas></div>
+    </div>
+    <div class="panel">
+      <div class="phd"><span class="ptitle">PERFORMANCE SNAPSHOT</span></div>
+      <div class="chartbox"><canvas id="cMetPf"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ PIPELINE ══════════ -->
+<div class="view" id="v-pipeline">
+  <div class="shd"><span class="stitle">LEAD PIPELINE</span><span class="smeta" id="pipeMeta"></span></div>
+  <div class="kanban" id="kanban"></div>
+</div>
+
+<!-- ══════════ ALL LEADS ══════════ -->
+<div class="view" id="v-leads">
+  <div class="sr">
+    <input class="si" id="lQ" placeholder="Search business, contact, notes, tech..." oninput="renderLeads()">
+    <select class="sf" id="lSt" onchange="renderLeads()">
+      <option value="">All Statuses</option>
+      <option value="new">New</option><option value="contacted">Contacted</option>
+      <option value="interested">Interested</option><option value="proposal_sent">Proposal Sent</option>
+      <option value="soft_close">Soft Close</option><option value="closed_won">Closed Won</option>
+      <option value="closed_lost">Closed Lost</option><option value="not_interested">Not Interested</option>
+    </select>
+    <select class="sf" id="lTc" onchange="renderLeads()">
+      <option value="">All Techs</option>
+      <option value="Taylor">Taylor</option><option value="Braden">Braden</option>
+    </select>
+    <select class="sf" id="lCl" onchange="renderLeads()">
+      <option value="">Called?</option>
+      <option value="y">Called ✓</option><option value="n">Not Called</option>
+    </select>
+  </div>
+  <div class="panel">
+    <div class="tw"><table>
+      <thead><tr>
+        <th>Business</th><th>Contact</th><th>Phone</th><th>Status</th>
+        <th>EC Tech</th><th>Called By</th><th>Price</th><th>Called</th>
+        <th>Has Site</th><th>Needs Site</th><th>Follow-Up</th><th>Notes</th>
+      </tr></thead>
+      <tbody id="lTbody"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ══════════ FOLLOW-UPS ══════════ -->
+<div class="view" id="v-followups">
+  <div class="g2">
+    <div class="panel">
+      <div class="phd"><span class="ptitle">SCHEDULED FOLLOW-UPS</span><span class="pmeta" id="fuSchedMeta"></span></div>
+      <div class="pbody" id="fuList"></div>
+    </div>
+    <div class="panel">
+      <div class="phd"><span class="ptitle">UNCALLED LEADS</span><span class="pmeta" id="fuUncalledMeta"></span></div>
+      <div class="tw"><table>
+        <thead><tr><th>Business</th><th>Phone</th><th>Status</th><th>Tech</th><th>Price</th></tr></thead>
+        <tbody id="fuUncalled"></tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ REVENUE ══════════ -->
+<div class="view" id="v-revenue">
+  <div class="krow k4" id="revK"></div>
+  <div class="g2">
+    <div class="panel">
+      <div class="phd"><span class="ptitle">REVENUE BY TECH</span></div>
+      <div class="chartbox"><canvas id="cRevTech"></canvas></div>
+    </div>
+    <div class="panel">
+      <div class="phd"><span class="ptitle">MONTHLY TREND</span></div>
+      <div class="chartbox"><canvas id="cRevMonth"></canvas></div>
+    </div>
+  </div>
+  <div class="shd"><span class="stitle">CLOSED DEALS</span></div>
+  <div class="panel">
+    <div class="tw"><table>
+      <thead><tr><th>Business</th><th>Contact</th><th>EC Tech</th><th>Called By</th><th>Close Date</th><th>Amount</th><th>Hours</th><th>$/hr</th></tr></thead>
+      <tbody id="revTbody"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ══════════ COMMISSIONS ══════════ -->
+<div class="view" id="v-commissions">
+  <div class="comm-row" id="commCards"></div>
+  <div class="shd"><span class="stitle">BREAKDOWN — CLOSED DEALS</span></div>
+  <div class="panel">
+    <div class="tw"><table>
+      <thead><tr>
+        <th>Business</th><th>Price</th><th>Called By</th><th>EC Tech</th>
+        <th>Call (10%)</th><th>Base (45%)</th><th>Combined (55%)</th><th>Scenario</th>
+      </tr></thead>
+      <tbody id="commTbody"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ══════════ CALCULATOR ══════════ -->
+<div class="view" id="v-calculator">
+  <div class="shd"><span class="stitle">COMMISSION CALCULATOR</span><span class="smeta">Live Breakdown</span></div>
+  <div class="calc-grid">
+    <div class="cin">
+      <div style="font-family:var(--fd);font-size:1.05rem;letter-spacing:.04em;margin-bottom:1.1rem;">PROJECT INPUTS</div>
+      <div class="cf"><label class="clbl">Project Value ($)</label><input type="number" class="cinp" id="cPrice" value="1500" oninput="calc()"></div>
+      <div class="cf"><label class="clbl">Who Made the Call / Provided Lead?</label>
+        <select class="cinp" id="cCaller" onchange="calc()">
+          <option>Taylor</option><option>Braden</option><option>Jami</option><option value="other">Other</option>
+        </select>
+      </div>
+      <div class="cf"><label class="clbl">EC Tech Assigned</label>
+        <select class="cinp" id="cTech" onchange="calc()">
+          <option>Taylor</option><option>Braden</option>
+        </select>
+      </div>
+      <div class="cf"><label class="clbl">Quick-Fill from Product</label>
+        <select class="cinp" id="cProd" onchange="calcProd()">
+          <option value="">— Custom Price —</option>
+          <option value="1500">Landing Page Dev — $1,500</option>
+          <option value="1000">Back End Development — $1,000</option>
+          <option value="500">Website Hosting — $500/yr</option>
+          <option value="400">Website Maintenance — $400/mo</option>
+          <option value="125">Website Update — $125</option>
+        </select>
+      </div>
+      <div style="background:var(--s2);border:1px solid var(--bdr);padding:.9rem 1rem;margin-top:.5rem;">
+        <div style="font-family:var(--fm);font-size:.5rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mu);margin-bottom:.45rem;">Commission Rules</div>
+        <div style="font-size:.7rem;color:var(--mu);line-height:1.75">
+          • Call Made / Lead Provided → <strong style="color:var(--y)">10%</strong><br>
+          • Base Commission (per Tech) → <strong style="color:var(--c)">45%</strong><br>
+          • Combined (same person) → <strong style="color:var(--g)">55%</strong>
+        </div>
+      </div>
+    </div>
+    <div class="cout">
+      <div style="font-family:var(--fd);font-size:1.05rem;letter-spacing:.04em;margin-bottom:1.1rem;">BREAKDOWN</div>
+      <div id="calcOut"></div>
+      <div style="margin-top:1.4rem;">
+        <div style="font-family:var(--fm);font-size:.5rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mu);margin-bottom:.55rem;">Scenario Compare</div>
+        <canvas id="cCalc" style="max-height:160px"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ PROJECTS ══════════ -->
+<div class="view" id="v-projects">
+  <div class="krow k4" id="projK"></div>
+  <div class="shd"><span class="stitle">ALL PROJECTS</span></div>
+  <div class="proj-grid" id="projGrid"></div>
+</div>
+
+<!-- ══════════ TEAM ══════════ -->
+<div class="view" id="v-team">
+  <div class="g2">
+    <div>
+      <div class="shd"><span class="stitle">LEADERBOARD</span></div>
+      <div class="lb" id="lb"></div>
+    </div>
+    <div class="panel">
+      <div class="phd"><span class="ptitle">DEALS BY MEMBER</span></div>
+      <div class="chartbox"><canvas id="cTeam"></canvas></div>
+    </div>
+  </div>
+  <div class="krow k4" style="margin-top:1.2rem" id="teamK"></div>
+  <div class="g2" style="margin-top:0">
+    <div class="panel">
+      <div class="phd"><span class="ptitle">TAYLOR — LEADS</span></div>
+      <div class="tw"><table>
+        <thead><tr><th>Business</th><th>Status</th><th>Price</th><th>Close</th></tr></thead>
+        <tbody id="tTbody"></tbody>
+      </table></div>
+    </div>
+    <div class="panel">
+      <div class="phd"><span class="ptitle">BRADEN — LEADS</span></div>
+      <div class="tw"><table>
+        <thead><tr><th>Business</th><th>Status</th><th>Price</th><th>Close</th></tr></thead>
+        <tbody id="bTbody"></tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ TIME LOG ══════════ -->
+<div class="view" id="v-timelog">
+  <div class="g2">
+    <div class="panel">
+      <div class="phd"><span class="ptitle">TIME ENTRIES</span><span class="pmeta" id="teMeta"></span></div>
+      <div class="pbody" id="teList"></div>
+    </div>
+    <div>
+      <div class="krow k2" id="teK"></div>
+      <div class="panel">
+        <div class="phd"><span class="ptitle">HOURS BY PROJECT</span></div>
+        <div class="chartbox"><canvas id="cTime"></canvas></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ PRODUCTS ══════════ -->
+<div class="view" id="v-products">
+  <div class="shd"><span class="stitle">SERVICES CATALOG</span><span class="smeta">5 Active Services</span></div>
+  <div class="prod-grid" id="prodGrid"></div>
+</div>
+
+  </div>
+</div>
+
+<!-- AUTH WALL -->
+<div id="authWall">
+  <div class="auth-wordmark">The Endless <span>Creative</span></div>
+  <div class="auth-tagline">EC Mothership — Secure Login</div>
+  <div class="auth-box">
+    <div class="auth-strip"></div>
+    <div class="auth-box-inner">
+    <div class="auth-logo">EC MOTHERSHIP</div>
+    <div class="auth-eyebrow">⬡ Internal Access Only</div>
+    <div class="auth-field">
+      <label class="auth-lbl">Email</label>
+      <input class="auth-inp" id="authEmail" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+    </div>
+    <div class="auth-field">
+      <label class="auth-lbl">Password</label>
+      <input class="auth-inp" id="authPass" type="password" autocomplete="off" onkeydown="if(event.key==='Enter')doLogin()">
+      <div class="auth-err" id="authErr">Incorrect email or password.</div>
+    </div>
+    <button class="auth-submit" onclick="doLogin()">Sign In →</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div class="ov" id="profModal">
+  <div class="modal" style="max-width:520px">
+    <div class="mhd"><span class="mtitle">PROFILE &amp; SETTINGS</span><button class="mx" onclick="closeMod('profModal')">&#10005;</button></div>
+    <div class="mbody">
+      <div class="prof-avatar" id="profAv"></div>
+      <div class="prof-email" id="profEmail"></div>
+      <div class="prof-divider">Change My Password</div>
+      <div class="mrow full"><div class="mf s2"><span class="mlbl">Current Password</span><input type="password" class="minp" id="profCurr" placeholder="Current password" autocomplete="off"></div></div>
+      <div class="mrow">
+        <div class="mf"><span class="mlbl">New Password</span><input type="password" class="minp" id="profNew" placeholder="New password" autocomplete="off"></div>
+        <div class="mf"><span class="mlbl">Confirm New</span><input type="password" class="minp" id="profConf" placeholder="Confirm password" autocomplete="off"></div>
+      </div>
+      <div id="profMsg" style="font-family:var(--fm);font-size:.55rem;margin-top:.5rem;display:none;"></div>
+      <div style="display:flex;gap:.6rem;justify-content:flex-end;padding-top:.9rem;border-top:1px solid var(--bdr);margin-top:.75rem;">
+        <button class="btn" onclick="changePassword()">Save Password</button>
+      </div>
+      <div class="prof-divider" style="margin-top:1.4rem;">Manage Users</div>
+      <div id="userList" style="margin-bottom:1rem;"></div>
+      <div style="background:var(--s2);border:1px solid var(--bdr);padding:1rem;margin-bottom:.75rem;">
+        <div style="font-family:var(--fm);font-size:.5rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mu);margin-bottom:.75rem;">Add New User</div>
+        <div class="mrow">
+          <div class="mf"><span class="mlbl">Name</span><input class="minp" id="nuName" placeholder="Display name" autocomplete="off"></div>
+          <div class="mf"><span class="mlbl">Email</span><input class="minp" id="nuEmail" placeholder="email@theendlesscreative.com" autocomplete="off"></div>
+        </div>
+        <div class="mrow">
+          <div class="mf"><span class="mlbl">Password</span><input type="password" class="minp" id="nuPass" placeholder="Password" autocomplete="off"></div>
+          <div class="mf"><span class="mlbl">Role</span>
+            <select class="minp" id="nuRole"><option value="admin">Admin</option><option value="user">User</option></select>
+          </div>
+        </div>
+        <div id="nuMsg" style="font-family:var(--fm);font-size:.55rem;margin-bottom:.5rem;display:none;"></div>
+        <button class="btn pri" onclick="addUser()" style="width:100%">+ Add User</button>
+      </div>
+      <div class="mfoot" style="padding-top:.75rem;border-top:1px solid var(--bdr);margin-top:.25rem;">
+        <button class="btn" onclick="doLogout()" style="background:rgba(255,45,120,.1);border-color:var(--m);color:var(--m);">⏻ Logout</button>
+        <button class="btn" onclick="closeMod('profModal')">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD LEAD MODAL -->
+<div class="ov" id="modLead">
+  <div class="modal">
+    <div class="mhd"><span class="mtitle">ADD LEAD</span><button class="mx" onclick="closeMod('modLead')">✕</button></div>
+    <div class="mbody">
+      <div class="mrow">
+        <div class="mf"><span class="mlbl">Business Name *</span><input class="minp" id="nlBiz" placeholder="Business name"></div>
+        <div class="mf"><span class="mlbl">Contact Person</span><input class="minp" id="nlCon" placeholder="Name"></div>
+      </div>
+      <div class="mrow">
+        <div class="mf"><span class="mlbl">Phone</span><input class="minp" id="nlPh" placeholder="(865) 000-0000"></div>
+        <div class="mf"><span class="mlbl">Project Price ($)</span><input type="number" class="minp" id="nlPr" value="1200"></div>
+      </div>
+      <div class="mrow">
+        <div class="mf"><span class="mlbl">Called By</span><input class="minp" id="nlCb" placeholder="Taylor / Braden / Jami"></div>
+        <div class="mf"><span class="mlbl">EC Tech</span>
+          <select class="minp" id="nlTc"><option value="">Unassigned</option><option>Taylor</option><option>Braden</option></select>
+        </div>
+      </div>
+      <div class="mrow">
+        <div class="mf"><span class="mlbl">Status</span>
+          <select class="minp" id="nlSt">
+            <option value="new">New</option><option value="contacted">Contacted</option>
+            <option value="interested">Interested</option><option value="proposal_sent">Proposal Sent</option>
+            <option value="closed_won">Closed Won</option><option value="not_interested">Not Interested</option>
+          </select>
+        </div>
+        <div class="mf"><span class="mlbl">Follow-Up Date</span><input type="date" class="minp" id="nlFu"></div>
+      </div>
+      <div class="mrow full">
+        <div class="mf s2"><span class="mlbl">Lead Need</span><input class="minp" id="nlNd" placeholder="Website, Ads, SEO..."></div>
+      </div>
+      <div class="mrow full">
+        <div class="mf s2"><span class="mlbl">Notes</span><textarea class="minp" id="nlNo" rows="3" placeholder="Notes..."></textarea></div>
+      </div>
+      <div class="mrow">
+        <div class="mf" style="flex-direction:row;align-items:center;gap:.6rem;padding:.5rem 0">
+          <input type="checkbox" id="nlCalled" style="accent-color:var(--y);width:13px;height:13px">
+          <label class="mlbl" for="nlCalled" style="cursor:pointer;margin:0">Already Called?</label>
+        </div>
+        <div class="mf" style="flex-direction:row;align-items:center;gap:.6rem;padding:.5rem 0">
+          <input type="checkbox" id="nlHas" style="accent-color:var(--y);width:13px;height:13px">
+          <label class="mlbl" for="nlHas" style="cursor:pointer;margin:0">Has Website?</label>
+        </div>
+      </div>
+      <div class="mfoot">
+        <button class="btn" onclick="closeMod('modLead')">Cancel</button>
+        <button class="btn pri" onclick="saveLead()">Save Lead</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════ DATA ═══════════════════════
+let LEADS=[{id:"69aba2cd",business_name:"Performance Products",contact_person:"Terry",phone:"",status:"closed_won",ec_tech:"Braden",call_made_by:"Braden",project_price:2000,called:true,has_website:true,needs_new_website:false,interested:true,closed_won_date:"2026-01-20",next_follow_up:"",lead_need:"",notes:"",total_hours:0,created_date:"2026-03-07"},{id:"69ab596b",business_name:"Music Valley Antiques & Marketplace",contact_person:"Stephanie",phone:"6155576560",status:"not_interested",ec_tech:"Braden",call_made_by:"Jami",project_price:1500,called:true,has_website:true,needs_new_website:true,interested:true,closed_won_date:null,next_follow_up:"",lead_need:"",notes:"Too expensive",total_hours:0,created_date:"2026-03-06"},{id:"69ab577c",business_name:"Rocking Horse Antiques",contact_person:"Robin",phone:"9314564288",status:"interested",ec_tech:"Braden",call_made_by:"Braden",project_price:1500,called:true,has_website:true,needs_new_website:true,interested:true,closed_won_date:null,next_follow_up:"",lead_need:"",notes:"",total_hours:0,created_date:"2026-03-06"},{id:"69ab5675",business_name:"Legacy Haus",contact_person:"Amy",phone:"3913196070",status:"interested",ec_tech:"Taylor",call_made_by:"Taylor",project_price:1500,called:true,has_website:true,needs_new_website:true,interested:true,closed_won_date:null,next_follow_up:"",lead_need:"",notes:"",total_hours:0,created_date:"2026-03-06"},{id:"69ab4ab9",business_name:"Superlative Antiques",contact_person:"Dennis",phone:"",status:"not_interested",ec_tech:"Braden",call_made_by:"Jami",project_price:1200,called:true,has_website:true,needs_new_website:true,interested:true,closed_won_date:null,next_follow_up:"",lead_need:"",notes:"$50 hosting fee monthly quoted. Requested email correspondence.",total_hours:0,created_date:"2026-03-06"},{id:"69a70357",business_name:"James Day Construction",contact_person:"James Day (Cheeseburger)",phone:"8652541985",status:"interested",ec_tech:"",call_made_by:"Taylor",project_price:1500,called:false,has_website:false,needs_new_website:true,interested:true,closed_won_date:null,next_follow_up:"",lead_need:"",notes:"",total_hours:0,created_date:"2026-03-03"},{id:"69a6f8b3",business_name:"C&D Printing",contact_person:"Charlie",phone:"8654574264",status:"not_interested",ec_tech:"Taylor",call_made_by:"",project_price:1300,called:false,has_website:false,needs_new_website:true,interested:false,closed_won_date:null,next_follow_up:"",lead_need:"",notes:"",total_hours:0,created_date:"2026-03-03"},{id:"69a0a751",business_name:"Spot Auto Detail",contact_person:"Ty",phone:"(865) 824-6090",status:"closed_lost",ec_tech:"Braden",call_made_by:"Braden",project_price:1500,called:true,has_website:false,needs_new_website:true,interested:true,closed_won_date:null,next_follow_up:"",lead_need:"",notes:"Ty just bought company. Interested in website. Sent text with link.",total_hours:0.5,created_date:"2026-02-26"},{id:"69a0a2e5",business_name:"Capybara Coffee",contact_person:"",phone:"8658519540",status:"contacted",ec_tech:"",call_made_by:"Taylor",project_price:1200,called:true,has_website:true,needs_new_website:true,interested:false,closed_won_date:null,next_follow_up:"",lead_need:"",notes:"Prefers email: capybaracoffee@gmail.com",total_hours:0,created_date:"2026-02-26"},{id:"69a08739",business_name:"Heritage Pools",contact_person:"Charlie",phone:"8659477527",status:"new",ec_tech:"",call_made_by:"Taylor",project_price:1200,called:false,has_website:true,needs_new_website:true,interested:false,closed_won_date:null,next_follow_up:"2026-02-27",lead_need:"",notes:"Call back and speak with Charlie. Website outdated.",total_hours:0,created_date:"2026-02-26"},{id:"699dc412",business_name:"RoofScapes LLC",contact_person:"",phone:"(865) 394-8457",status:"contacted",ec_tech:"",call_made_by:"",project_price:1200,called:false,has_website:false,needs_new_website:false,interested:false,closed_won_date:null,next_follow_up:"",lead_need:"",notes:"No website or ad account.",total_hours:0,created_date:"2026-02-24"},{id:"699dc379",business_name:"Affordable Roofing Solutions",contact_person:"Sean",phone:"(865) 315-1493",status:"new",ec_tech:"",call_made_by:"",project_price:1200,called:false,has_website:false,needs_new_website:false,interested:false,closed_won_date:null,next_follow_up:"",lead_need:"",notes:"2517 Julian Ln, Knoxville TN",total_hours:0,created_date:"2026-02-24"},{id:"699d3f2d",business_name:"Ciderville Music",contact_person:"Anthony Lay",phone:"(865) 945-3595",status:"closed_won",ec_tech:"Taylor",call_made_by:"Taylor",project_price:1300,called:true,has_website:false,needs_new_website:true,interested:true,closed_won_date:"2026-03-02",next_follow_up:"",lead_need:"Website, Facebook ads.",notes:"Site Confirmed. $100 annual domain. Get logo from C&D Printing.",total_hours:2.75,created_date:"2026-02-24"},{id:"699d2905",business_name:"Handy Dandy Market",contact_person:"",phone:"(865) 253-7812",status:"not_interested",ec_tech:"",call_made_by:"Taylor",project_price:1200,called:false,has_website:false,needs_new_website:true,interested:false,closed_won_date:null,next_follow_up:"",lead_need:"",notes:"",total_hours:0,created_date:"2026-02-24"},{id:"699ba082",business_name:"Good Times Game House",contact_person:"",phone:"8654091640",status:"not_interested",ec_tech:"",call_made_by:"",project_price:1200,called:false,has_website:false,needs_new_website:true,interested:false,closed_won_date:null,next_follow_up:"",lead_need:"",notes:"",total_hours:0,created_date:"2026-02-23"},{id:"699ba083",business_name:"Paragon Gaming",contact_person:"",phone:"8655008923",status:"new",ec_tech:"",call_made_by:"",project_price:1200,called:true,has_website:false,needs_new_website:true,interested:false,closed_won_date:null,next_follow_up:"",lead_need:"Owner in evenings. Using linktree.",notes:"Can clean their image up and help scale.",total_hours:0,created_date:"2026-02-23"},{id:"699ba084",business_name:"Replay Games",contact_person:"",phone:"8654140386",status:"new",ec_tech:"",call_made_by:"",project_price:1200,called:false,has_website:false,needs_new_website:false,interested:false,closed_won_date:null,next_follow_up:"",lead_need:"",notes:"",total_hours:0,created_date:"2026-02-23"},{id:"699ba085",business_name:"Gamers Link",contact_person:"",phone:"8652277557",status:"new",ec_tech:"",call_made_by:"",project_price:1200,called:false,has_website:false,needs_new_website:false,interested:false,closed_won_date:null,next_follow_up:"",lead_need:"",notes:"",total_hours:0,created_date:"2026-02-23"},{id:"699ba086",business_name:"Control Freak Video Games",contact_person:"",phone:"8654286582",status:"new",ec_tech:"",call_made_by:"",project_price:1200,called:true,has_website:true,needs_new_website:true,interested:false,closed_won_date:null,next_follow_up:"",lead_need:"Website — theirs sucks.",notes:"Call back tomorrow.",total_hours:0,created_date:"2026-02-23"},{id:"699ba087",business_name:"Play 2 Win Games",contact_person:"",phone:"8659108357",status:"not_interested",ec_tech:"",call_made_by:"",project_price:1200,called:false,has_website:false,needs_new_website:false,interested:false,closed_won_date:null,next_follow_up:"",lead_need:"",notes:"",total_hours:0,created_date:"2026-02-23"},{id:"699ba088",business_name:"Level Up Games and Hobbies",contact_person:"Steven",phone:"8653320041",status:"new",ec_tech:"Taylor",call_made_by:"Taylor",project_price:1200,called:true,has_website:false,needs_new_website:true,interested:false,closed_won_date:null,next_follow_up:"",lead_need:"",notes:"Build out and send. levelupknox@gmail.com",total_hours:0,created_date:"2026-02-23"},{id:"699ba089",business_name:"Blue Wave Pressure Washing",contact_person:"",phone:"8659734333",status:"new",ec_tech:"",call_made_by:"",project_price:1200,called:false,has_website:false,needs_new_website:false,interested:false,closed_won_date:null,next_follow_up:"",lead_need:"",notes:"",total_hours:0,created_date:"2026-02-23"},{id:"699ba08a",business_name:"Pressure Wash Wizard",contact_person:"",phone:"8652374120",status:"new",ec_tech:"",call_made_by:"",project_price:1200,called:false,has_website:false,needs_new_website:false,interested:false,closed_won_date:null,next_follow_up:"",lead_need:"",notes:"",total_hours:0,created_date:"2026-02-23"},{id:"699ba08b",business_name:"Dr. Clean Soft Wash",contact_person:"",phone:"8656170860",status:"new",ec_tech:"",call_made_by:"",project_price:1200,called:false,has_website:false,needs_new_website:false,interested:false,closed_won_date:null,next_follow_up:"",lead_need:"",notes:"",total_hours:0,created_date:"2026-02-23"},{id:"699ba08c",business_name:"TN Valley Power Cleaning",contact_person:"",phone:"8652473467",status:"new",ec_tech:"",call_made_by:"",project_price:1200,called:false,has_website:false,needs_new_website:false,interested:false,closed_won_date:null,next_follow_up:"",lead_need:"",notes:"",total_hours:0,created_date:"2026-02-23"},{id:"699ba08d",business_name:"865 Pressure Pros",contact_person:"",phone:"865-424-1153",status:"not_interested",ec_tech:"",call_made_by:"",project_price:1200,called:true,has_website:false,needs_new_website:false,interested:false,closed_won_date:null,next_follow_up:"",lead_need:"",notes:"",total_hours:0,created_date:"2026-02-23"},{id:"699b9081",business_name:"Suburban Barber Shop",contact_person:"",phone:"8652540760",status:"new",ec_tech:"",call_made_by:"",project_price:1200,called:false,has_website:true,needs_new_website:true,interested:false,closed_won_date:null,next_follow_up:"",lead_need:"",notes:"Family owned. Great google reviews but terrible online presence.",total_hours:0,created_date:"2026-02-22"},{id:"699b8699",business_name:"In The Cut Barber Shop",contact_person:"Melvin Bean",phone:"8653154411",status:"not_interested",ec_tech:"",call_made_by:"Taylor",project_price:1000,called:true,has_website:false,needs_new_website:true,interested:false,closed_won_date:null,next_follow_up:"",lead_need:"",notes:"",total_hours:0,created_date:"2026-02-22"},{id:"699a4786",business_name:"Cozy House Cleaners",contact_person:"Daniel",phone:"",status:"not_interested",ec_tech:"",call_made_by:"Jami",project_price:1200,called:true,has_website:true,needs_new_website:true,interested:true,closed_won_date:null,next_follow_up:"2026-02-26",lead_need:"",notes:"",total_hours:0,created_date:"2026-02-22"},{id:"699a200a",business_name:"Ginger Cleaning Services Inc.",contact_person:"",phone:"(865) 712-9837",status:"new",ec_tech:"",call_made_by:"",project_price:1200,called:false,has_website:false,needs_new_website:true,interested:false,closed_won_date:null,next_follow_up:"",lead_need:"Website",notes:"",total_hours:0,created_date:"2026-02-21"},{id:"699a200b",business_name:"Knoxville's Taylor Maid",contact_person:"",phone:"(865) 272-9117",status:"new",ec_tech:"",call_made_by:"",project_price:1200,called:false,has_website:false,needs_new_website:false,interested:false,closed_won_date:null,next_follow_up:"",lead_need:"",notes:"",total_hours:0,created_date:"2026-02-21"},{id:"699a200c",business_name:"Diamond Shine",contact_person:"",phone:"(865) 773-2056",status:"new",ec_tech:"",call_made_by:"",project_price:1200,called:false,has_website:false,needs_new_website:false,interested:false,closed_won_date:null,next_follow_up:"",lead_need:"",notes:"",total_hours:0,created_date:"2026-02-21"},{id:"699a200d",business_name:"Servall Cleaning Inc.",contact_person:"",phone:"(865) 947-5480",status:"new",ec_tech:"",call_made_by:"",project_price:1200,called:false,has_website:false,needs_new_website:false,interested:false,closed_won_date:null,next_follow_up:"",lead_need:"",notes:"",total_hours:0,created_date:"2026-02-21"},{id:"699a200e",business_name:"Neat Nest LLC",contact_person:"",phone:"(865) 321-0488",status:"new",ec_tech:"",call_made_by:"",project_price:1200,called:false,has_website:false,needs_new_website:false,interested:false,closed_won_date:null,next_follow_up:"",lead_need:"",notes:"",total_hours:0,created_date:"2026-02-21"},{id:"699a200f",business_name:"Discua's Cleaning",contact_person:"",phone:"(865) 455-5765",status:"new",ec_tech:"",call_made_by:"",project_price:1200,called:false,has_website:false,needs_new_website:false,interested:false,closed_won_date:null,next_follow_up:"",lead_need:"",notes:"",total_hours:0,created_date:"2026-02-21"},{id:"699a200g",business_name:"Maid in Faith (Clinton, TN)",contact_person:"",phone:"(865) 221-5398",status:"new",ec_tech:"",call_made_by:"",project_price:1200,called:false,has_website:false,needs_new_website:false,interested:false,closed_won_date:null,next_follow_up:"",lead_need:"",notes:"",total_hours:0,created_date:"2026-02-21"},{id:"699a200h",business_name:"Mom and Son House Cleaning",contact_person:"",phone:"(865) 346-5979",status:"new",ec_tech:"",call_made_by:"",project_price:1200,called:false,has_website:false,needs_new_website:false,interested:false,closed_won_date:null,next_follow_up:"",lead_need:"",notes:"",total_hours:0,created_date:"2026-02-21"},{id:"699a200i",business_name:"Super Kleen Maid Service",contact_person:"",phone:"(865) 386-3529",status:"new",ec_tech:"",call_made_by:"",project_price:1200,called:false,has_website:false,needs_new_website:false,interested:false,closed_won_date:null,next_follow_up:"",lead_need:"",notes:"",total_hours:0,created_date:"2026-02-21"},{id:"699a200j",business_name:"Classic Cleaning",contact_person:"",phone:"(865) 361-7901",status:"not_interested",ec_tech:"",call_made_by:"",project_price:1200,called:false,has_website:false,needs_new_website:false,interested:false,closed_won_date:null,next_follow_up:"",lead_need:"",notes:"",total_hours:0,created_date:"2026-02-21"},{id:"699a200k",business_name:"Cleaning Services Knoxville TN",contact_person:"",phone:"(865) 422-5665",status:"not_interested",ec_tech:"Braden",call_made_by:"Braden",project_price:1200,called:true,has_website:false,needs_new_website:false,interested:false,closed_won_date:null,next_follow_up:"",lead_need:"",notes:"Not interested.",total_hours:0,created_date:"2026-02-21"},{id:"699a200l",business_name:"Integrity Cleaning Solutions",contact_person:"",phone:"(865) 221-7663",status:"new",ec_tech:"",call_made_by:"",project_price:1200,called:false,has_website:false,needs_new_website:false,interested:false,closed_won_date:null,next_follow_up:"",lead_need:"",notes:"",total_hours:0,created_date:"2026-02-21"},{id:"69993385",business_name:"DLH Plumbing LLC",contact_person:"Leslie Haun",phone:"",status:"not_interested",ec_tech:"",call_made_by:"",project_price:1000,called:true,has_website:false,needs_new_website:true,interested:true,closed_won_date:null,next_follow_up:"2026-02-24",lead_need:"Website",notes:"Friend from high school. Sent mock landing page. Will follow up.",total_hours:0.43,created_date:"2026-02-21"},{id:"69992755",business_name:"Appalachian Naturals Hemp Co.",contact_person:"David",phone:"",status:"closed_won",ec_tech:"Taylor",call_made_by:"Taylor",project_price:1000,called:true,has_website:false,needs_new_website:true,interested:true,closed_won_date:"2026-02-23",next_follow_up:"",lead_need:"",notes:"$200 in weed. Paying $125 for updates.",total_hours:1.33,created_date:"2026-02-21"},{id:"69992718",business_name:"Chapman Collision Center",contact_person:"Paul Walker",phone:"",status:"closed_won",ec_tech:"Taylor",call_made_by:"Taylor",project_price:1000,called:true,has_website:true,needs_new_website:false,interested:true,closed_won_date:"2026-02-16",next_follow_up:"2026-02-23",lead_need:"Website",notes:"Paul on landing page www.chapmancollisioncenter.com. Payment collected.",total_hours:1.9,created_date:"2026-02-21"}];
+
+const TIME_ENTRIES=[{id:"t1",user_email:"taylor@theendlesscreative.com",lead_id:"69992755",duration_minutes:60,clock_in:"2026-02-26T02:23:00Z",notes:""},{id:"t2",user_email:"taylor@theendlesscreative.com",lead_id:"699d3f2d",duration_minutes:60,clock_in:"2026-03-06T03:23:00Z",notes:"Finishing site"},{id:"t3",user_email:"taylor@theendlesscreative.com",lead_id:"699d3f2d",duration_minutes:105,clock_in:"2026-03-02T15:15:00Z",notes:"Discovery and details at Ciderville"},{id:"t4",user_email:"braden@theendlesscreative.com",lead_id:"69a0a751",duration_minutes:30,clock_in:"2026-02-26T20:17:00Z",notes:"Building website"},{id:"t5",user_email:"taylor@theendlesscreative.com",lead_id:"69992755",duration_minutes:70,clock_in:"2026-02-24T21:30:00Z",notes:"Built site for first review and published"},{id:"t6",user_email:"taylor@theendlesscreative.com",lead_id:"69993385",duration_minutes:26,clock_in:"2026-02-21T23:38:00Z",notes:"Made a mock site, spoke with him."},{id:"t7",user_email:"taylor@theendlesscreative.com",lead_id:"69992755",duration_minutes:20,clock_in:"2026-02-21T23:50:00Z",notes:"Polishing up site. Cold call. Delivery. Next appt closed."},{id:"t8",user_email:"taylor@theendlesscreative.com",lead_id:"69992718",duration_minutes:37,clock_in:"2026-02-18T16:00:00Z",notes:"Closed sale at CCC"},{id:"t9",user_email:"taylor@theendlesscreative.com",lead_id:"69992718",duration_minutes:37,clock_in:"2026-02-18T02:00:00Z",notes:"Built the mock site"},{id:"t10",user_email:"taylor@theendlesscreative.com",lead_id:"69992718",duration_minutes:3,clock_in:"2026-02-21T03:42:00Z",notes:"Worked on setting up site"}];
+
+const METRICS=[{name:"Call Counter",value:67,previous_value:null,unit:"number",category:"performance",color:"var(--y)"},{name:"Monthly Revenue",value:48250,previous_value:42100,unit:"currency",category:"revenue",color:"var(--g)"},{name:"Active Users",value:2847,previous_value:2530,unit:"number",category:"users",color:"var(--c)"},{name:"System Uptime",value:99.8,previous_value:99.5,unit:"percentage",category:"performance",color:"var(--m)"},{name:"Engagement Rate",value:72.4,previous_value:68.1,unit:"percentage",category:"engagement",color:"var(--o)"}];
+
+const PROJECTS=[{id:"p1",name:"Brand Identity Refresh",description:"Complete overhaul of visual identity including logo, color palette, and typography system",status:"in_progress",priority:"high",category:"design",progress:65,due_date:"2026-03-15",budget:12000},{id:"p2",name:"API Gateway v2",description:"Rebuild the API gateway with improved rate limiting and authentication flows",status:"in_progress",priority:"critical",category:"development",progress:40,due_date:"2026-04-01",budget:25000},{id:"p3",name:"Q1 Marketing Campaign",description:"Multi-channel campaign targeting enterprise clients with new product features",status:"planning",priority:"medium",category:"marketing",progress:15,due_date:"2026-03-30",budget:8000},{id:"p4",name:"User Onboarding Redesign",description:"Streamline the onboarding flow to reduce drop-off and improve activation rates",status:"review",priority:"high",category:"design",progress:85,due_date:"2026-02-28",budget:6000},{id:"p5",name:"Data Pipeline Migration",description:"Migrate analytics pipeline from legacy system to modern event-driven architecture",status:"in_progress",priority:"high",category:"development",progress:55,due_date:"2026-05-01",budget:30000},{id:"p6",name:"Customer Success Playbook",description:"Document and standardize customer success processes and escalation workflows",status:"completed",priority:"medium",category:"operations",progress:100,due_date:"2026-02-15",budget:3000}];
+
+const ACTIVITIES=[{title:"Brand Identity Refresh moved to In Progress",type:"project_update",created_date:"2026-02-21"},{title:"New team member added to API Gateway v2",type:"team_change",created_date:"2026-02-21"},{title:"User Onboarding Redesign hit 85% completion",type:"milestone",created_date:"2026-02-21"},{title:"Comment added on Q1 Marketing Campaign",type:"comment",created_date:"2026-02-21"},{title:"Data Pipeline Migration sprint planning completed",type:"project_update",created_date:"2026-02-21"},{title:"Customer Success Playbook marked as completed",type:"milestone",created_date:"2026-02-21"}];
+
+const PRODUCTS=[{name:"Back End Development",price:1000,period:"Per Site",alt:"",description:"One-time setup to control images and components on your site.",features:[]},{name:"Website Update (1 update)",price:125,period:"One-Time",alt:"4/month for $400 (6 month agreement)",description:"1 revision to landing page. Ideal for menu updates, special events, new products.",features:["Update to Existing EC Landing Page","Update Any Text or Feature Section"]},{name:"Landing Page Development",price:1500,period:"One-Time",alt:"",description:"Professional landing page + 1 additional page. 2 revisions.",features:["Custom design","Responsive layout","SEO optimized","Deployment included","30-day support"]},{name:"Website Hosting",price:500,period:"Per Year",alt:"$50/month ($600/year)",description:"Reliable hosting with SSL, daily backups, CDN integration, 24/7 monitoring.",features:["99.9% uptime","SSL certificate","Daily backups","CDN integration","24/7 monitoring"]},{name:"Website Maintenance",price:400,period:"Per Month",alt:"",description:"Keep your website fresh with 1 update per week.",features:["1 update/week","Menu updates","Weekly promotions","Priority support","Security updates"]}];
+
+const COMMISSIONS=[{name:"Call Made / Lead Provided",pct:10,desc:"When a call is made or a lead is provided, that person receives an immediate 10% commission.",col:"var(--y)"},{name:"Base Commission (Braden & Taylor)",pct:45,desc:"Braden and Taylor each receive a 45% base commission on every project they are assigned to.",col:"var(--c)"},{name:"Combined Commission",pct:55,desc:"If Braden or Taylor both makes the call AND is assigned as EC Tech, they receive the full 55% combined rate.",col:"var(--g)"}];
+
+// ═══════════════════════ HELPERS ═══════════════════════
+const $=id=>document.getElementById(id);
+const fmt=n=>'$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});
+const fmtH=m=>{const h=Math.floor(m/60),r=m%60;return h?`${h}h ${r}m`:`${r}m`;};
+const SL={new:'New',contacted:'Contacted',interested:'Interested',proposal_sent:'Proposal Sent',soft_close:'Soft Close',closed_won:'Closed Won',closed_lost:'Closed Lost',not_interested:'Not Interested',negotiating:'Negotiating'};
+const SC={new:'s-new',contacted:'s-con',interested:'s-int',proposal_sent:'s-pro',soft_close:'s-sft',closed_won:'s-won',closed_lost:'s-lst',not_interested:'s-no',negotiating:'s-neg'};
+const PC={critical:'pri-c',high:'pri-h',medium:'pri-m',low:'pri-l'};
+const PSC={in_progress:'sta-ip',planning:'sta-pl',review:'sta-re',completed:'sta-co',on_hold:'sta-oh'};
+const PSL={in_progress:'In Progress',planning:'Planning',review:'Review',completed:'Completed',on_hold:'On Hold'};
+const ACL={project_update:'var(--c)',team_change:'var(--p)',milestone:'var(--g)',comment:'var(--y)',system:'var(--mu)'};
+const bdg=(s,cls)=>`<span class="badge ${cls}">${s}</span>`;
+const sbdg=s=>bdg(SL[s]||s,SC[s]||'s-new');
+const tick=v=>v?'<span style="color:var(--g)">✓</span>':'<span style="color:var(--sub)">—</span>';
+const sColor=s=>({new:'var(--c)',contacted:'#bfac00',interested:'var(--o)',closed_won:'var(--g)',closed_lost:'var(--m)',not_interested:'#777',proposal_sent:'var(--p)',soft_close:'var(--o)'}[s]||'var(--y)');
+const charts={};
+function mkChart(id,cfg){if(charts[id])charts[id].destroy();charts[id]=new Chart($(id),cfg);}
+const gc=()=>({grid:document.body.classList.contains('light')?'rgba(0,0,0,.05)':'rgba(255,255,255,.04)',text:document.body.classList.contains('light')?'rgba(17,17,17,.38)':'rgba(240,238,234,.38)',legend:document.body.classList.contains('light')?'rgba(17,17,17,.5)':'rgba(240,238,234,.5)'});
+
+// ═══════════════════════ NAVIGATION ═══════════════════════
+const RENDERERS={dashboard:dDash,metrics:dMetrics,pipeline:dPipeline,leads:renderLeads,followups:dFollowups,revenue:dRevenue,commissions:dComm,calculator:()=>calc(),projects:dProjects,team:dTeam,timelog:dTime,products:dProducts};
+function go(name,btn){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  document.querySelectorAll('.sb-link').forEach(b=>b.classList.remove('on'));
+  $('v-'+name).classList.add('on');
+  if(btn)btn.classList.add('on');
+  $('pgTitle').textContent=name.replace(/-/g,' ').toUpperCase();
+  if(RENDERERS[name])RENDERERS[name]();
+  closeSb();
+}
+function initBadges(){
+  const active=LEADS.filter(l=>!['closed_won','closed_lost','not_interested'].includes(l.status));
+  $('spipe').textContent=active.length;
+  $('sfu').textContent=LEADS.filter(l=>l.next_follow_up).length;
+}
+
+// ═══════════════════════ DASHBOARD ═══════════════════════
+function dDash(){
+  const won=LEADS.filter(l=>l.status==='closed_won');
+  const active=LEADS.filter(l=>!['closed_won','closed_lost','not_interested'].includes(l.status));
+  const ni=LEADS.filter(l=>l.status==='not_interested');
+  const rev=won.reduce((s,l)=>s+l.project_price,0);
+  const pipe=active.reduce((s,l)=>s+l.project_price,0);
+  const cr=Math.round(won.length/LEADS.length*100);
+  $('dk').innerHTML=`
+    <div class="kcard" style="--kc:var(--y)"><div class="klbl">Total Leads</div><div class="kval">${LEADS.length}</div><div class="ksub">${active.length} active</div></div>
+    <div class="kcard" style="--kc:var(--g)"><div class="klbl">Closed Won</div><div class="kval">${won.length}</div><div class="ktag up">↑ ${cr}% rate</div></div>
+    <div class="kcard" style="--kc:var(--c)"><div class="klbl">Total Revenue</div><div class="kval">${fmt(rev)}</div><div class="ksub">${won.length} deals</div></div>
+    <div class="kcard" style="--kc:var(--o)"><div class="klbl">Pipeline Value</div><div class="kval">${fmt(pipe)}</div><div class="ktag nt">${active.length} open</div></div>
+    <div class="kcard" style="--kc:var(--m)"><div class="klbl">Not Interested</div><div class="kval">${ni.length}</div><div class="ksub">${LEADS.filter(l=>l.status==='closed_lost').length} lost</div></div>`;
+  const sm={};LEADS.forEach(l=>{sm[l.status]=(sm[l.status]||0)+1;});
+  const g=gc();
+  mkChart('cStatus',{type:'doughnut',data:{labels:Object.keys(sm).map(s=>SL[s]||s),datasets:[{data:Object.values(sm),backgroundColor:['#00d4ff','#bfac00','#ff6b1a','#b06cff','#ff6b1a','#1aff8c','#ff2d78','#555','#ff45a0'],borderWidth:0,hoverOffset:5}]},options:{responsive:true,plugins:{legend:{position:'right',labels:{color:g.legend,font:{size:10},boxWidth:9,padding:7}}}}});
+  const bm={};LEADS.filter(l=>l.closed_won_date).forEach(l=>{const m=l.closed_won_date.slice(0,7);bm[m]=(bm[m]||0)+l.project_price;});
+  const ms=Object.keys(bm).sort();
+  const mLabels=ms.map(m=>{const[,mo]=m.split('-');return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+mo-1];});
+  mkChart('cRev',{type:'bar',data:{labels:mLabels,datasets:[{label:'Revenue',data:ms.map(m=>bm[m]),backgroundColor:'rgba(242,226,40,.6)',borderColor:'var(--y)',borderWidth:1}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:g.text},grid:{color:g.grid}},y:{ticks:{color:g.text,callback:v=>'$'+v.toLocaleString()},grid:{color:g.grid}}}}});
+  const recent=[...LEADS].sort((a,b)=>b.created_date.localeCompare(a.created_date)).slice(0,8);
+  $('dRecentMeta').textContent='Last 8 added';
+  $('dRecent').innerHTML=recent.map(l=>`<tr><td><strong>${l.business_name}</strong></td><td>${sbdg(l.status)}</td><td class="dim">${l.ec_tech||'—'}</td><td style="font-family:var(--fd);font-size:.95rem;color:var(--y)">${fmt(l.project_price)}</td><td>${tick(l.called)}</td><td class="mono dim" style="font-size:.58rem">${l.created_date}</td></tr>`).join('');
+  const fu=LEADS.filter(l=>l.next_follow_up).sort((a,b)=>a.next_follow_up.localeCompare(b.next_follow_up));
+  $('dFuMeta').textContent=fu.length+' scheduled';
+  $('dFu').innerHTML=fu.length?fu.map(l=>`<div class="fu"><div class="fu-dot" style="background:${sColor(l.status)}"></div><div style="flex:1"><div class="fu-biz">${l.business_name}</div>${l.contact_person?`<div class="fu-con">${l.contact_person}</div>`:''}</div><div class="fu-date">${l.next_follow_up}</div></div>`).join(''):'<div style="color:var(--mu);font-size:.75rem;padding:.4rem 0">No scheduled follow-ups.</div>';
+  $('dAct').innerHTML=ACTIVITIES.map(a=>`<div class="act-item"><div class="act-dot" style="background:${ACL[a.type]||'var(--y)'}"></div><div><div class="act-title">${a.title}</div><div class="act-sub">${a.type.replace(/_/g,' ')} · ${a.created_date}</div></div></div>`).join('');
+  const tW=won.filter(l=>l.ec_tech==='Taylor'),bW=won.filter(l=>l.ec_tech==='Braden');
+  const tR=tW.reduce((s,l)=>s+l.project_price,0),bR=bW.reduce((s,l)=>s+l.project_price,0);
+  const mx=Math.max(tR,bR)||1;
+  $('dTeam').innerHTML=`
+    <div class="lbr"><div class="lb-rk">1</div><div class="lb-av" style="background:rgba(0,212,255,.13);color:var(--c)">T</div><div class="lb-nm"><div class="lb-name">Taylor</div><div class="lb-em">taylor@theendlesscreative.com</div></div><div class="lb-st"><div class="lb-rev" style="color:var(--c)">${fmt(tR)}</div><div class="lb-deals">${tW.length} deals</div><div class="lb-bar"><div class="lb-fill" style="width:${Math.round(tR/mx*100)}%;background:var(--c)"></div></div></div></div>
+    <div class="lbr"><div class="lb-rk">2</div><div class="lb-av" style="background:rgba(255,45,120,.13);color:var(--m)">B</div><div class="lb-nm"><div class="lb-name">Braden</div><div class="lb-em">braden@theendlesscreative.com</div></div><div class="lb-st"><div class="lb-rev" style="color:var(--m)">${fmt(bR)}</div><div class="lb-deals">${bW.length} deals</div><div class="lb-bar"><div class="lb-fill" style="width:${Math.round(bR/mx*100)}%;background:var(--m)"></div></div></div></div>`;
+}
+
+// ═══════════════════════ METRICS ═══════════════════════
+function dMetrics(){
+  const g=gc();
+  $('metricGrid').innerHTML=METRICS.map(m=>{
+    const isUp=m.previous_value!==null&&m.value>m.previous_value;
+    const pct=m.previous_value?Math.abs(Math.round((m.value-m.previous_value)/m.previous_value*100)):null;
+    const display=m.unit==='currency'?fmt(m.value):m.unit==='percentage'?m.value+'%':m.value.toLocaleString();
+    const prevDisp=m.previous_value?m.unit==='currency'?fmt(m.previous_value):m.unit==='percentage'?m.previous_value+'%':m.previous_value.toLocaleString():null;
+    return `<div class="mc" style="--mc:${m.color}"><div class="mc-name">${m.name}</div><div class="mc-val">${display}</div>${prevDisp?`<div class="mc-prev">prev: ${prevDisp}</div>`:''} ${pct!==null?`<div class="mc-delta ${isUp?'ktag up':'ktag dn'}">${isUp?'↑':'↓'} ${pct}%</div>`:''}</div>`;
+  }).join('');
+  mkChart('cMetRev',{type:'bar',data:{labels:METRICS.map(m=>m.name),datasets:[{label:'Current',data:METRICS.map(m=>m.value),backgroundColor:'rgba(26,255,140,.55)',borderColor:'var(--g)',borderWidth:1},{label:'Previous',data:METRICS.map(m=>m.previous_value||0),backgroundColor:'rgba(0,212,255,.3)',borderColor:'var(--c)',borderWidth:1}]},options:{responsive:true,plugins:{legend:{labels:{color:gc().legend,font:{size:10}}}},scales:{x:{ticks:{color:gc().text,font:{size:9}},grid:{color:gc().grid}},y:{ticks:{color:gc().text},grid:{color:gc().grid}}}}});
+  mkChart('cMetPf',{type:'radar',data:{labels:METRICS.map(m=>m.name),datasets:[{label:'Current',data:METRICS.map(m=>m.unit==='currency'?m.value/1000:m.value),borderColor:'var(--y)',backgroundColor:'rgba(242,226,40,.1)',pointBackgroundColor:'var(--y)'},{label:'Previous',data:METRICS.map(m=>m.unit==='currency'?(m.previous_value||0)/1000:(m.previous_value||0)),borderColor:'var(--c)',backgroundColor:'rgba(0,212,255,.08)',pointBackgroundColor:'var(--c)'}]},options:{responsive:true,plugins:{legend:{labels:{color:gc().legend,font:{size:10}}}},scales:{r:{grid:{color:gc().grid},ticks:{color:gc().text,font:{size:9}},pointLabels:{color:gc().text,font:{size:9}}}}}});
+}
+
+// ═══════════════════════ PIPELINE ═══════════════════════
+function dPipeline(){
+  const cols=['new','contacted','interested','proposal_sent','soft_close','closed_won','not_interested'];
+  const clabels={new:'New',contacted:'Contacted',interested:'Interested',proposal_sent:'Proposal',soft_close:'Soft Close',closed_won:'Closed Won',not_interested:'Not Interested'};
+  const ccolors={new:'var(--c)',contacted:'#bfac00',interested:'var(--o)',proposal_sent:'var(--p)',soft_close:'var(--m)',closed_won:'var(--g)',not_interested:'#555'};
+  $('pipeMeta').textContent=`${LEADS.filter(l=>!['closed_lost'].includes(l.status)).length} leads · ${LEADS.filter(l=>l.status==='closed_won').length} closed`;
+  $('kanban').innerHTML=cols.map(col=>{
+    const cls=LEADS.filter(l=>l.status===col);
+    const rev=cls.reduce((s,l)=>s+l.project_price,0);
+    return `<div class="kcol"><div class="kchd" style="border-top:2px solid ${ccolors[col]}"><span class="kctitle">${clabels[col]}</span><span class="kccount">${cls.length}</span></div><div class="kcrev">${fmt(rev)}</div><div class="kccards">${cls.length?cls.map(l=>`<div class="kcc"><div class="kcc-biz">${l.business_name}</div><div class="kcc-meta">${l.ec_tech||'Unassigned'}</div><div class="kcc-price">${fmt(l.project_price)}</div></div>`).join(''):'<div style="color:var(--sub);font-size:.68rem;padding:.25rem">Empty</div>'}</div></div>`;
+  }).join('');
+}
+
+// ═══════════════════════ ALL LEADS ═══════════════════════
+function renderLeads(){
+  const q=($('lQ')||{value:''}).value.toLowerCase();
+  const sf=($('lSt')||{value:''}).value;
+  const tf=($('lTc')||{value:''}).value;
+  const cf=($('lCl')||{value:''}).value;
+  const list=LEADS.filter(l=>{
+    if(q&&!l.business_name.toLowerCase().includes(q)&&!(l.contact_person||'').toLowerCase().includes(q)&&!(l.notes||'').toLowerCase().includes(q)&&!(l.ec_tech||'').toLowerCase().includes(q))return false;
+    if(sf&&l.status!==sf)return false;
+    if(tf&&l.ec_tech!==tf)return false;
+    if(cf==='y'&&!l.called)return false;
+    if(cf==='n'&&l.called)return false;
+    return true;
+  });
+  $('lTbody').innerHTML=list.map(l=>`<tr><td><strong>${l.business_name}</strong></td><td class="dim">${l.contact_person||'—'}</td><td class="mono dim">${l.phone||'—'}</td><td>${sbdg(l.status)}</td><td class="dim">${l.ec_tech||'—'}</td><td class="dim">${l.call_made_by||'—'}</td><td style="font-family:var(--fd);font-size:.95rem;color:var(--y)">${fmt(l.project_price)}</td><td>${tick(l.called)}</td><td>${tick(l.has_website)}</td><td>${tick(l.needs_new_website)}</td><td class="mono dim" style="font-size:.58rem">${l.next_follow_up||'—'}</td><td class="dim" style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.7rem">${l.notes||'—'}</td></tr>`).join('');
+}
+
+// ═══════════════════════ FOLLOW-UPS ═══════════════════════
+function dFollowups(){
+  const fu=LEADS.filter(l=>l.next_follow_up).sort((a,b)=>a.next_follow_up.localeCompare(b.next_follow_up));
+  $('fuSchedMeta').textContent=fu.length+' leads';
+  $('fuList').innerHTML=fu.length?fu.map(l=>`<div class="fu"><div class="fu-dot" style="background:${sColor(l.status)}"></div><div style="flex:1"><div class="fu-biz">${l.business_name}</div>${l.contact_person?`<div class="fu-con">${l.contact_person}</div>`:''}</div>${sbdg(l.status)}<div class="fu-date">${l.next_follow_up}</div></div>`).join(''):'<div style="color:var(--mu);font-size:.78rem">No scheduled follow-ups.</div>';
+  const unc=LEADS.filter(l=>!l.called&&!['closed_won','closed_lost','not_interested'].includes(l.status));
+  $('fuUncalledMeta').textContent=unc.length+' leads';
+  $('fuUncalled').innerHTML=unc.map(l=>`<tr><td><strong>${l.business_name}</strong></td><td class="mono dim">${l.phone||'—'}</td><td>${sbdg(l.status)}</td><td class="dim">${l.ec_tech||'—'}</td><td style="font-family:var(--fd);font-size:.9rem;color:var(--y)">${fmt(l.project_price)}</td></tr>`).join('');
+}
+
+// ═══════════════════════ REVENUE ═══════════════════════
+function dRevenue(){
+  const won=LEADS.filter(l=>l.status==='closed_won');
+  const rev=won.reduce((s,l)=>s+l.project_price,0);
+  const avg=won.length?Math.round(rev/won.length):0;
+  const tW=won.filter(l=>l.ec_tech==='Taylor'),bW=won.filter(l=>l.ec_tech==='Braden');
+  const tR=tW.reduce((s,l)=>s+l.project_price,0),bR=bW.reduce((s,l)=>s+l.project_price,0);
+  $('revK').innerHTML=`<div class="kcard" style="--kc:var(--g)"><div class="klbl">Total Revenue</div><div class="kval">${fmt(rev)}</div><div class="ksub">${won.length} deals closed</div></div><div class="kcard" style="--kc:var(--y)"><div class="klbl">Avg Deal Size</div><div class="kval">${fmt(avg)}</div></div><div class="kcard" style="--kc:var(--c)"><div class="klbl">Taylor Revenue</div><div class="kval">${fmt(tR)}</div><div class="ksub">${tW.length} deals</div></div><div class="kcard" style="--kc:var(--m)"><div class="klbl">Braden Revenue</div><div class="kval">${fmt(bR)}</div><div class="ksub">${bW.length} deals</div></div>`;
+  const g=gc();
+  mkChart('cRevTech',{type:'bar',data:{labels:['Taylor','Braden'],datasets:[{label:'Revenue',data:[tR,bR],backgroundColor:['rgba(0,212,255,.55)','rgba(255,45,120,.55)'],borderColor:['var(--c)','var(--m)'],borderWidth:1,yAxisID:'y'},{label:'Deals',data:[tW.length,bW.length],backgroundColor:['rgba(0,212,255,.2)','rgba(255,45,120,.2)'],borderColor:['var(--c)','var(--m)'],borderWidth:1,yAxisID:'y1'}]},options:{responsive:true,plugins:{legend:{labels:{color:g.legend,font:{size:10}}}},scales:{x:{ticks:{color:g.text},grid:{display:false}},y:{ticks:{color:g.text,callback:v=>'$'+v.toLocaleString()},grid:{color:g.grid}},y1:{position:'right',ticks:{color:g.text},grid:{display:false}}}}});
+  const bm={};won.forEach(l=>{if(l.closed_won_date){const m=l.closed_won_date.slice(0,7);bm[m]=(bm[m]||0)+l.project_price;}});
+  const ms=Object.keys(bm).sort();
+  mkChart('cRevMonth',{type:'line',data:{labels:ms.map(m=>{const[,mo]=m.split('-');return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+mo-1];}),datasets:[{label:'Revenue',data:ms.map(m=>bm[m]),borderColor:'var(--g)',backgroundColor:'rgba(26,255,140,.07)',fill:true,tension:.35,pointBackgroundColor:'var(--g)',pointRadius:4}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:g.text},grid:{color:g.grid}},y:{ticks:{color:g.text,callback:v=>'$'+v.toLocaleString()},grid:{color:g.grid}}}}});
+  $('revTbody').innerHTML=won.sort((a,b)=>(b.closed_won_date||'').localeCompare(a.closed_won_date||'')).map(l=>{
+    const eff=l.total_hours>0?Math.round(l.project_price/l.total_hours):null;
+    return `<tr><td><strong>${l.business_name}</strong></td><td class="dim">${l.contact_person||'—'}</td><td><span class="badge ${l.ec_tech==='Taylor'?'s-con':'s-int'}">${l.ec_tech||'—'}</span></td><td class="dim">${l.call_made_by||'—'}</td><td class="mono dim" style="font-size:.6rem">${l.closed_won_date||'—'}</td><td style="font-family:var(--fd);font-size:1.05rem;color:var(--g)">${fmt(l.project_price)}</td><td class="dim">${l.total_hours?l.total_hours.toFixed(2)+'h':'—'}</td><td style="color:var(--y);font-weight:700">${eff?fmt(eff)+'/hr':'—'}</td></tr>`;
+  }).join('');
+}
+
+// ═══════════════════════ COMMISSIONS ═══════════════════════
+function dComm(){
+  $('commCards').innerHTML=COMMISSIONS.map(c=>`<div class="cc" style="--ca:${c.col}"><div class="cc-pct">${c.pct}%</div><div class="cc-name">${c.name.toUpperCase()}</div><div class="cc-desc">${c.desc}</div></div>`).join('');
+  const won=LEADS.filter(l=>l.status==='closed_won');
+  $('commTbody').innerHTML=won.map(l=>{
+    const p=l.project_price,cc=p*.10,bc=p*.45,cb=p*.55;
+    const same=l.call_made_by&&l.call_made_by===l.ec_tech;
+    return `<tr><td><strong>${l.business_name}</strong></td><td style="font-family:var(--fd);font-size:.95rem;color:var(--y)">${fmt(p)}</td><td class="dim">${l.call_made_by||'—'}</td><td class="dim">${l.ec_tech||'—'}</td><td style="color:var(--o)">${fmt(cc)}</td><td style="color:var(--c)">${fmt(bc)}</td><td style="color:var(--g);font-weight:700">${fmt(cb)}</td><td><span class="badge ${same?'s-won':'s-con'}">${same?'Combined (55%)':'Split'}</span></td></tr>`;
+  }).join('');
+}
+
+// ═══════════════════════ CALCULATOR ═══════════════════════
+function calcProd(){const v=$('cProd').value;if(v){$('cPrice').value=v;calc();}}
+function calc(){
+  const p=parseFloat($('cPrice').value)||0;
+  const caller=$('cCaller').value,tech=$('cTech').value;
+  const same=caller===tech;
+  const cc=p*.10,bc=p*.45,cb=p*.55;
+  const techEarns=same?cb:bc,callerEarns=same?0:cc;
+  $('calcOut').innerHTML=`<div class="cr"><div><div class="crl">Project Value</div></div><div><div class="crv" style="color:var(--tx)">${fmt(p)}</div></div></div><div class="cr"><div><div class="crl">Call Commission (10%)</div><div class="crl-sub">→ ${caller}</div></div><div><div class="crv" style="color:var(--o)">${fmt(cc)}</div><div class="crv-sub">10%</div></div></div><div class="cr"><div><div class="crl">Base Commission (45%)</div><div class="crl-sub">→ ${tech}</div></div><div><div class="crv" style="color:var(--c)">${fmt(bc)}</div><div class="crv-sub">45%</div></div></div><div class="cr"><div><div class="crl">Combined Rate (55%)</div><div class="crl-sub">if same person</div></div><div><div class="crv" style="color:var(--g)">${fmt(cb)}</div><div class="crv-sub">55%</div></div></div><div class="ctotal"><div><div class="ctot-lbl">${tech} earns ${same?'(combined)':'(base)'}</div><div class="ctot-sub">${same?'Same person — call+base':'Different people'}</div></div><div class="ctot-val" style="color:${same?'var(--g)':'var(--c)'}">${fmt(techEarns)}</div></div>${!same?`<div class="ctotal" style="margin-top:.45rem;background:transparent;border:1px solid var(--bdr);"><div><div class="ctot-lbl">${caller} earns (call comm)</div></div><div class="ctot-val" style="color:var(--o);font-size:1.5rem">${fmt(callerEarns)}</div></div>`:''}`;
+  const g=gc();
+  mkChart('cCalc',{type:'bar',data:{labels:['Call (10%)','Base (45%)','Combined (55%)'],datasets:[{data:[cc,bc,cb],backgroundColor:['rgba(255,107,26,.6)','rgba(0,212,255,.6)','rgba(26,255,140,.6)'],borderColor:['var(--o)','var(--c)','var(--g)'],borderWidth:1}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:g.text},grid:{display:false}},y:{ticks:{color:g.text,callback:v=>'$'+v.toLocaleString()},grid:{color:g.grid}}}}});
+}
+
+// ═══════════════════════ PROJECTS ═══════════════════════
+function dProjects(){
+  const ip=PROJECTS.filter(p=>p.status==='in_progress').length;
+  const done=PROJECTS.filter(p=>p.status==='completed').length;
+  const totBudget=PROJECTS.reduce((s,p)=>s+p.budget,0);
+  const avgProg=Math.round(PROJECTS.reduce((s,p)=>s+p.progress,0)/PROJECTS.length);
+  $('projK').innerHTML=`<div class="kcard" style="--kc:var(--y)"><div class="klbl">Total Projects</div><div class="kval">${PROJECTS.length}</div></div><div class="kcard" style="--kc:var(--c)"><div class="klbl">In Progress</div><div class="kval">${ip}</div></div><div class="kcard" style="--kc:var(--g)"><div class="klbl">Completed</div><div class="kval">${done}</div></div><div class="kcard" style="--kc:var(--o)"><div class="klbl">Total Budget</div><div class="kval">${fmt(totBudget)}</div><div class="ksub">Avg ${avgProg}% complete</div></div>`;
+  const progColors={planning:'#777',in_progress:'var(--c)',review:'#bfac00',completed:'var(--g)',on_hold:'var(--m)'};
+  $('projGrid').innerHTML=PROJECTS.map(p=>`<div class="proj-card"><div class="proj-top"><div class="proj-name">${p.name.toUpperCase()}</div><span class="badge ${PC[p.priority]}">${p.priority}</span></div><div class="proj-desc">${p.description}</div><div class="proj-meta"><span class="badge ${PSC[p.status]}">${PSL[p.status]}</span><span class="badge s-new" style="font-size:.46rem">${p.category}</span></div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem"><div class="proj-budget">${fmt(p.budget)}</div><div style="font-family:var(--fm);font-size:.52rem;color:var(--mu)">Due ${p.due_date}</div></div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem"><div style="font-family:var(--fm);font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mu)">Progress</div><div style="font-family:var(--fd);font-size:.9rem;color:${progColors[p.status]}">${p.progress}%</div></div><div class="prog-track"><div class="prog-fill" style="width:${p.progress}%;background:${progColors[p.status]}"></div></div></div>`).join('');
+}
+
+// ═══════════════════════ TEAM ═══════════════════════
+function dTeam(){
+  const won=LEADS.filter(l=>l.status==='closed_won');
+  const tAll=LEADS.filter(l=>l.ec_tech==='Taylor'),bAll=LEADS.filter(l=>l.ec_tech==='Braden');
+  const tW=won.filter(l=>l.ec_tech==='Taylor'),bW=won.filter(l=>l.ec_tech==='Braden');
+  const tR=tW.reduce((s,l)=>s+l.project_price,0),bR=bW.reduce((s,l)=>s+l.project_price,0);
+  const mx=Math.max(tR,bR)||1;
+  $('lb').innerHTML=`<div class="lbr"><div class="lb-rk">1</div><div class="lb-av" style="background:rgba(0,212,255,.13);color:var(--c)">T</div><div class="lb-nm"><div class="lb-name">Taylor</div><div class="lb-em">taylor@theendlesscreative.com</div></div><div class="lb-st"><div class="lb-rev" style="color:var(--c)">${fmt(tR)}</div><div class="lb-deals">${tW.length} closed · ${tAll.length} assigned</div><div class="lb-bar"><div class="lb-fill" style="width:${Math.round(tR/mx*100)}%;background:var(--c)"></div></div></div></div><div class="lbr"><div class="lb-rk">2</div><div class="lb-av" style="background:rgba(255,45,120,.13);color:var(--m)">B</div><div class="lb-nm"><div class="lb-name">Braden</div><div class="lb-em">braden@theendlesscreative.com</div></div><div class="lb-st"><div class="lb-rev" style="color:var(--m)">${fmt(bR)}</div><div class="lb-deals">${bW.length} closed · ${bAll.length} assigned</div><div class="lb-bar"><div class="lb-fill" style="width:${Math.round(bR/mx*100)}%;background:var(--m)"></div></div></div></div>`;
+  const g=gc();
+  mkChart('cTeam',{type:'bar',data:{labels:['Taylor','Braden'],datasets:[{label:'Closed Won',data:[tW.length,bW.length],backgroundColor:['rgba(0,212,255,.55)','rgba(255,45,120,.55)'],borderColor:['var(--c)','var(--m)'],borderWidth:1},{label:'Total Assigned',data:[tAll.length,bAll.length],backgroundColor:['rgba(0,212,255,.18)','rgba(255,45,120,.18)'],borderColor:['var(--c)','var(--m)'],borderWidth:1}]},options:{responsive:true,plugins:{legend:{labels:{color:g.legend,font:{size:10}}}},scales:{x:{ticks:{color:g.text},grid:{display:false}},y:{ticks:{color:g.text},grid:{color:g.grid}}}}});
+  const tConv=tAll.length?Math.round(tW.length/tAll.length*100):0;
+  const bConv=bAll.length?Math.round(bW.length/bAll.length*100):0;
+  $('teamK').innerHTML=`<div class="kcard" style="--kc:var(--c)"><div class="klbl">Taylor Revenue</div><div class="kval">${fmt(tR)}</div><div class="ksub">${tW.length} closed</div></div><div class="kcard" style="--kc:var(--m)"><div class="klbl">Braden Revenue</div><div class="kval">${fmt(bR)}</div><div class="ksub">${bW.length} closed</div></div><div class="kcard" style="--kc:var(--y)"><div class="klbl">Taylor Close Rate</div><div class="kval">${tConv}%</div><div class="ksub">${tAll.length} assigned</div></div><div class="kcard" style="--kc:var(--o)"><div class="klbl">Braden Close Rate</div><div class="kval">${bConv}%</div><div class="ksub">${bAll.length} assigned</div></div>`;
+  $('tTbody').innerHTML=tAll.map(l=>`<tr><td><strong>${l.business_name}</strong></td><td>${sbdg(l.status)}</td><td style="font-family:var(--fd);font-size:.9rem;color:var(--y)">${fmt(l.project_price)}</td><td class="mono dim" style="font-size:.58rem">${l.closed_won_date||'—'}</td></tr>`).join('');
+  $('bTbody').innerHTML=bAll.map(l=>`<tr><td><strong>${l.business_name}</strong></td><td>${sbdg(l.status)}</td><td style="font-family:var(--fd);font-size:.9rem;color:var(--y)">${fmt(l.project_price)}</td><td class="mono dim" style="font-size:.58rem">${l.closed_won_date||'—'}</td></tr>`).join('');
+}
+
+// ═══════════════════════ TIME LOG ═══════════════════════
+function dTime(){
+  const totMin=TIME_ENTRIES.reduce((s,t)=>s+t.duration_minutes,0);
+  const tMin=TIME_ENTRIES.filter(t=>t.user_email.includes('taylor')).reduce((s,t)=>s+t.duration_minutes,0);
+  const bMin=TIME_ENTRIES.filter(t=>t.user_email.includes('braden')).reduce((s,t)=>s+t.duration_minutes,0);
+  $('teMeta').textContent=`${TIME_ENTRIES.length} entries · ${fmtH(totMin)} total`;
+  $('teK').innerHTML=`<div class="kcard" style="--kc:var(--y)"><div class="klbl">Total Hours</div><div class="kval">${(totMin/60).toFixed(1)}h</div></div><div class="kcard" style="--kc:var(--c)"><div class="klbl">Taylor Hours</div><div class="kval">${(tMin/60).toFixed(1)}h</div><div class="ksub">${(bMin/60).toFixed(1)}h Braden</div></div>`;
+  const byL={};
+  TIME_ENTRIES.forEach(t=>{
+    const lead=LEADS.find(l=>l.id===t.lead_id||t.lead_id.startsWith(l.id.slice(0,6)));
+    const nm=lead?lead.business_name:t.lead_id.slice(0,8);
+    byL[nm]=(byL[nm]||0)+t.duration_minutes;
+  });
+  const sorted=Object.entries(byL).sort((a,b)=>b[1]-a[1]);
+  const g=gc();
+  mkChart('cTime',{type:'bar',data:{labels:sorted.map(x=>x[0]),datasets:[{label:'Hours',data:sorted.map(x=>+(x[1]/60).toFixed(2)),backgroundColor:'rgba(242,226,40,.55)',borderColor:'var(--y)',borderWidth:1}]},options:{responsive:true,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:g.text,callback:v=>v+'h'},grid:{color:g.grid}},y:{ticks:{color:g.text,font:{size:10}},grid:{display:false}}}}});
+  $('teList').innerHTML=TIME_ENTRIES.map(t=>{
+    const lead=LEADS.find(l=>l.id===t.lead_id||t.lead_id.startsWith(l.id.slice(0,6)));
+    const isT=t.user_email.includes('taylor');
+    const dt=new Date(t.clock_in);
+    return `<div class="te"><div class="te-av" style="background:${isT?'rgba(0,212,255,.13)':'rgba(255,45,120,.13)'};color:${isT?'var(--c)':'var(--m)'}">${isT?'T':'B'}</div><div style="flex:1"><div class="te-biz">${lead?lead.business_name:t.lead_id}</div>${t.notes?`<div class="te-note">${t.notes}</div>`:''}<div class="te-meta">${dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})} · ${t.user_email.split('@')[0]}</div></div><div class="te-dur">${fmtH(t.duration_minutes)}</div></div>`;
+  }).join('');
+}
+
+// ═══════════════════════ PRODUCTS ═══════════════════════
+function dProducts(){
+  $('prodGrid').innerHTML=PRODUCTS.map(p=>`<div class="pc"><div class="pc-price">${fmt(p.price)}</div><div class="pc-period">${p.period}</div><div class="pc-name">${p.name.toUpperCase()}</div><div class="pc-desc">${p.description}</div>${p.alt?`<div class="pc-alt">Alt: ${p.alt}</div>`:''} ${p.features.map(f=>`<div class="pc-feat">${f}</div>`).join('')}</div>`).join('');
+}
+
+// ═══════════════════════ MODAL / LEAD ═══════════════════════
+function openMod(id){$(id).classList.add('open');}
+function closeMod(id){$(id).classList.remove('open');}
+function saveLead(){
+  const biz=$('nlBiz').value.trim();
+  if(!biz){$('nlBiz').style.borderColor='var(--m)';return;}
+  LEADS.unshift({id:'local-'+Date.now(),business_name:biz,contact_person:$('nlCon').value,phone:$('nlPh').value,project_price:parseFloat($('nlPr').value)||1200,call_made_by:$('nlCb').value,ec_tech:$('nlTc').value,status:$('nlSt').value,next_follow_up:$('nlFu').value,lead_need:$('nlNd').value,notes:$('nlNo').value,called:$('nlCalled').checked,has_website:$('nlHas').checked,needs_new_website:false,interested:false,closed_won_date:null,total_hours:0,created_date:new Date().toISOString().slice(0,10)});
+  closeMod('modLead');initBadges();dDash();
+  ['nlBiz','nlCon','nlPh','nlCb','nlNd','nlNo'].forEach(i=>{$(i).value='';});
+  $('nlPr').value='1200';$('nlCalled').checked=false;$('nlHas').checked=false;
+}
+
+// ═══════════════════════ CSV ═══════════════════════
+function dlCSV(){
+  const cols=['business_name','contact_person','phone','status','ec_tech','call_made_by','project_price','called','has_website','needs_new_website','closed_won_date','next_follow_up','lead_need','notes'];
+  const rows=LEADS.map(l=>cols.map(c=>{const v=l[c]??'';return String(v).includes(',')?`"${String(v).replace(/"/g,'""')}"`:v;}).join(','));
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([[cols.join(','),...rows].join('\n')],{type:'text/csv'}));
+  a.download='ec-leads-'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+}
+
+// ═══════════════════════ THEME / MOBILE ═══════════════════════
+function toggleTheme(){
+  document.body.classList.toggle('light');
+  const l=document.body.classList.contains('light');
+  $('tIco').textContent=l?'☾':'☀';$('tLbl').textContent=l?' Dark Mode':' Light Mode';
+  const mob=$('mobThemeBtn');if(mob)mob.textContent=l?'☾':'☀';
+  localStorage.setItem('ms_theme',l?'light':'dark');
+  const active=document.querySelector('.view.on');
+  if(active){const n=active.id.replace('v-','');if(RENDERERS[n])RENDERERS[n]();}
+}
+function toggleSb(){
+  document.querySelector('.sb').classList.toggle('open');
+  $('drawerOv').classList.toggle('open');
+  const btn=$('mobMenuBtn');
+  btn.textContent=document.querySelector('.sb').classList.contains('open')?'✕':'☰';
+}
+function closeSb(){
+  document.querySelector('.sb').classList.remove('open');
+  $('drawerOv').classList.remove('open');
+  const btn=$('mobMenuBtn');if(btn)btn.textContent='☰';
+}
+
+// ═══════════════════════ AUTH ═══════════════════════
+// NOTE: Uses key 'ec_ms_users' and 'ec_ms_session' to stay
+// completely separate from the funnel admin (key 'tec_auth')
+const MS_USERS_KEY='ec_ms_users';
+const MS_SESSION_KEY='ec_ms_session';
+const MS_DEFAULT_USERS={
+  'taylor@theendlesscreative.com':{name:'Taylor',password:'admin',color:'var(--c)',role:'admin'},
+  'braden@theendlesscreative.com':{name:'Braden',password:'admin',color:'var(--m)',role:'admin'}
+};
+function getUsers(){const s=localStorage.getItem(MS_USERS_KEY);return s?JSON.parse(s):MS_DEFAULT_USERS;}
+function saveUsers(u){localStorage.setItem(MS_USERS_KEY,JSON.stringify(u));}
+function getSession(){return localStorage.getItem(MS_SESSION_KEY);}
+function setSession(e){localStorage.setItem(MS_SESSION_KEY,e);}
+function clearSession(){localStorage.removeItem(MS_SESSION_KEY);}
+
+function doLogin(){
+  const email=$('authEmail').value.trim().toLowerCase();
+  const pass=$('authPass').value;
+  const users=getUsers();
+  const err=$('authErr');
+  if(users[email]&&users[email].password===pass){
+    err.classList.remove('show');setSession(email);showApp(email);
+  }else{
+    err.classList.add('show');$('authPass').value='';$('authPass').focus();
+  }
+}
+function showApp(email){
+  $('authWall').classList.add('hidden');
+  const users=getUsers();const user=users[email]||{};
+  const name=user.name||email.split('@')[0];
+  const color=user.color||'var(--y)';
+  const av=document.querySelector('.sb-av');
+  av.style.background=avatarBg(color);av.style.color=color;av.textContent=name[0].toUpperCase();
+  document.querySelector('.sb-un').textContent=name;
+  document.querySelector('.sb-ur').textContent=email;
+  $('sbUserName').textContent=name;
+  initBadges();dDash();calc();
+}
+function doLogout(){
+  clearSession();
+  closeMod('profModal');
+  $('authWall').classList.remove('hidden');
+}
+function avatarBg(color){
+  if(color==='var(--c)')return 'rgba(0,212,255,.14)';
+  if(color==='var(--m)')return 'rgba(255,45,120,.14)';
+  if(color==='var(--g)')return 'rgba(26,255,140,.14)';
+  if(color==='var(--o)')return 'rgba(255,107,26,.14)';
+  if(color==='var(--p)')return 'rgba(176,108,255,.14)';
+  return 'rgba(242,226,40,.14)';
+}
+function loadProfile(){
+  const email=getSession();const users=getUsers();const user=users[email]||{};
+  const name=user.name||email.split('@')[0];const color=user.color||'var(--y)';
+  const av=$('profAv');av.textContent=name[0].toUpperCase();av.style.background=avatarBg(color);av.style.color=color;av.style.fontSize='2rem';
+  $('profEmail').textContent=email;
+  ['profCurr','profNew','profConf'].forEach(id=>$(id).value='');
+  $('profMsg').style.display='none';
+  renderUserList();
+}
+function renderUserList(){
+  const email=getSession();const users=getUsers();const el=$('userList');
+  if(!el)return;
+  const keys=Object.keys(users);
+  if(!keys.length){el.innerHTML='<div style="color:var(--mu);font-size:.72rem">No users found.</div>';return;}
+  el.innerHTML=keys.map(k=>{
+    const u=users[k];const isSelf=k===email;
+    const isCore=k==='taylor@theendlesscreative.com'||k==='braden@theendlesscreative.com';
+    const col=u.color||'var(--y)';
+    return `<div style="display:flex;align-items:center;gap:.7rem;padding:.55rem .75rem;background:var(--s2);border:1px solid var(--bdr);margin-bottom:.35rem;">
+      <div style="width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:.85rem;background:${avatarBg(col)};color:${col};flex-shrink:0">${(u.name||k)[0].toUpperCase()}</div>
+      <div style="flex:1;min-width:0"><div style="font-size:.78rem;font-weight:600">${u.name||'—'}</div><div style="font-family:var(--fm);font-size:.5rem;color:var(--mu);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${k}</div></div>
+      <span style="font-family:var(--fm);font-size:.46rem;padding:.1rem .38rem;background:${u.role==='admin'?'rgba(242,226,40,.12)':'rgba(0,212,255,.1)'};color:${u.role==='admin'?'var(--y)':'var(--c)'}">${u.role||'user'}</span>
+      ${isSelf?'<span style="font-family:var(--fm);font-size:.46rem;color:var(--mu)">(you)</span>':''}
+      ${!isSelf&&!isCore?`<button onclick="removeUser('${k}')" style="background:rgba(255,45,120,.1);border:1px solid var(--m);color:var(--m);font-family:var(--fm);font-size:.48rem;padding:.18rem .45rem;cursor:pointer;">Remove</button>`:''}
+    </div>`;
+  }).join('');
+}
+function changePassword(){
+  const email=getSession();const users=getUsers();
+  const curr=$('profCurr').value,newP=$('profNew').value,conf=$('profConf').value;
+  const msg=$('profMsg');msg.style.display='block';
+  if(!curr||!newP||!conf){msg.textContent='All fields are required.';msg.style.color='var(--m)';return;}
+  if(users[email].password!==curr){msg.textContent='Current password is incorrect.';msg.style.color='var(--m)';return;}
+  if(newP.length<4){msg.textContent='Password must be at least 4 characters.';msg.style.color='var(--m)';return;}
+  if(newP!==conf){msg.textContent='New passwords do not match.';msg.style.color='var(--m)';return;}
+  users[email].password=newP;saveUsers(users);
+  msg.textContent='✓ Password updated.';msg.style.color='var(--g)';
+  ['profCurr','profNew','profConf'].forEach(id=>$(id).value='');
+}
+function addUser(){
+  const name=$('nuName').value.trim(),email=$('nuEmail').value.trim().toLowerCase();
+  const pass=$('nuPass').value,role=$('nuRole').value;
+  const msg=$('nuMsg');msg.style.display='block';
+  if(!name||!email||!pass){msg.textContent='All fields are required.';msg.style.color='var(--m)';return;}
+  if(!email.includes('@')){msg.textContent='Enter a valid email.';msg.style.color='var(--m)';return;}
+  if(pass.length<4){msg.textContent='Password must be at least 4 characters.';msg.style.color='var(--m)';return;}
+  const users=getUsers();
+  if(users[email]){msg.textContent='A user with that email already exists.';msg.style.color='var(--m)';return;}
+  const colors=['var(--o)','var(--p)','var(--g)'];
+  const usedColors=Object.values(users).map(u=>u.color);
+  const nextColor=colors.find(col=>!usedColors.includes(col))||'var(--y)';
+  users[email]={name,password:pass,role,color:nextColor};
+  saveUsers(users);msg.textContent='✓ User added.';msg.style.color='var(--g)';
+  ['nuName','nuEmail','nuPass'].forEach(id=>$(id).value='');
+  renderUserList();
+}
+function removeUser(email){
+  if(!confirm(`Remove user ${email}?`))return;
+  const users=getUsers();delete users[email];saveUsers(users);renderUserList();
+}
+
+// ═══════════════════════ INIT ═══════════════════════
+(function(){
+  const t=localStorage.getItem('ms_theme');
+  if(t==='light'){
+    document.body.classList.add('light');
+    const ti=$('tIco');if(ti)ti.textContent='☾';
+    const tl=$('tLbl');if(tl)tl.textContent=' Dark Mode';
+    const mb=$('mobThemeBtn');if(mb)mb.textContent='☾';
+  }
+})();
+
+const _session=getSession();
+const _users=getUsers();
+if(_session&&_users[_session]){showApp(_session);}
+else{clearSession();}
+</script>
+</body>
+</html>
