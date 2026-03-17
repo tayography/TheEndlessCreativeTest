@@ -746,6 +746,22 @@
         touchLastDir = 0;
       });
     })();
+    <script id="MOBILE-PATCH-FUNNEL-JS">
+// Mobile patch: fix result-cards grid on very small screens
+// (handles browsers that don't support min() inside minmax)
+(function() {
+  function fixResultCards() {
+    var cards = document.querySelector('.result-cards');
+    if (!cards) return;
+    if (window.innerWidth <= 480) {
+      cards.style.gridTemplateColumns = '1fr';
+    } else {
+      cards.style.gridTemplateColumns = '';
+    }
+  }
+  fixResultCards();
+  window.addEventListener('resize', fixResultCards);
+})();
   </script>
 </body>
 </html>
